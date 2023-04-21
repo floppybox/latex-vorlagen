@@ -1,0 +1,280 @@
+\documentclass[11pt,a4paper,twoside,addpoints,color,answers]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% -> um Ligaturen beim Kopieren aus dem PDF aufzulösen
+%
+%\usepackage{libertine}
+%\input{glyphtounicode}
+%
+%\pdfglyphtounicode{f_f}{FB00}
+%\pdfglyphtounicode{f_f_i}{FB03}
+%\pdfglyphtounicode{f_f_l}{FB04}
+%\pdfglyphtounicode{f_i}{FB01}
+%
+%\pdfgentounicode=1
+%
+%% <- um Ligaturen beim Kopieren aus dem PDF aufzulösen
+
+\usepackage[ngerman]{babel}
+\usepackage{paralist}
+\usepackage{extarrows}
+\usepackage{graphicx}
+\usepackage{wrapfig} % Produces figures which text can flow around !!! funktioniert nicht mit exam !!!
+\usepackage[export]{adjustbox}
+\usepackage{framed}
+\usepackage{tabularx}
+	\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{qrcode}%QR-Codes generieren
+\usepackage{multicol}%mehrspaltige Listen
+\usepackage{xcolor}
+\definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
+\usepackage{pifont} %Access to PostScript standard Symbol and Dingbats fonts
+\usepackage{blindtext}
+\usepackage{caption}
+\usepackage[verbose]{linegoal}
+\usepackage{subcaption}
+\captionsetup[subfigure]{font=footnotesize,
+	labelfont=up,
+	%%singlelinecheck=false,
+	%%format=hang,
+	justification=centering % <-- new
+}
+
+\usepackage{float}
+\usepackage{upgreek} % griechische Buchstaben aufrech z. B. für Präfixe
+\usepackage{url}							% Verbatim with URL-sensitive line breaks
+\usepackage{accents}
+\usepackage{relsize} % für {\larger\textcircled{\smaller[2]1}}
+
+\newcommand*{\zb}{z.\,B. }
+\newcommand{\bx}[1]{\fbox{\rule[-0.5ex]{0ex}{3ex} \hspace*{#1ex}}}
+\newcommand{\bluebox}[1]{\textcolor{blue}{\fbox{\rule[-1ex]{0ex}{3.5ex} \quad #1 \quad}}}
+
+\newcommand{\grid}[1]{
+	%		\newcount\G
+	%		\G=#1
+	%		\divide\G by 2
+	%		\advance\G by 
+	
+	\begin{tikzpicture}[x=1cm,y=.5cm]
+	\tikzset{dashdot/.style={dash pattern=on 0.1mm off 0.9mm on 0.1mm off 0.9mm}}
+	\draw[%style=help lines ,upright
+	dashdot
+	%densely dotted
+	%loosely dotted
+	] (0,0) grid[step=0.5cm] (16,#1);
+	\end{tikzpicture}
+}
+
+\newcommand{\gridn}[1]{
+	%		\newcount\G
+	%		\G=#1
+	%		\divide\G by 2
+	%		\advance\G by 
+	
+	\begin{tikzpicture}[x=1cm,y=.5cm]
+	\tikzset{dashdot/.style={dash pattern=on 0.1mm off 0.9mm on 0.1mm off 0.9mm}}
+	\draw[%style=help lines ,
+	dashdot
+	%densely dotted
+	%loosely dotted
+	] (0,0) grid[step=0.5cm] (16,#1);
+	\end{tikzpicture}
+}
+
+\newcommand{\gridxy}[2]{
+	
+	\begin{tikzpicture}[x=.5cm,y=.5cm]
+	\tikzset{dashdot/.style={dash pattern=on 0.1mm off 0.9mm on 0.1mm off 0.9mm}}
+	\draw[%style=help lines ,
+	dashdot
+	%densely dotted
+	%loosely dotted
+	] (0,0) grid[step=0.5cm] (#1,#2);
+	\end{tikzpicture}
+}
+
+\usepackage[most]{tcolorbox}
+%package provides commands to produce colorful framed boxes which can also be applied to math environments.
+\newtcolorbox{mymbox}[1]{
+	%enhanced,
+	ams align, 
+	colback=yellow!5!white, 
+	colframe=red!75!black, 
+	fonttitle=\bfseries, 
+	drop fuzzy shadow=blue!50!black!50!white,
+	title=#1}
+\newtcolorbox{mymbox*}[1]{
+	%enhanced,
+	ams align*, 
+	colback=yellow!5!white, 
+	colframe=red!75!black, 
+	fonttitle=\bfseries, 
+	drop fuzzy shadow=blue!50!black!50!white,
+	title=#1}
+\newtcolorbox{mybox}[1]{colback=red!5!white, colframe=red!75!black, fonttitle=\bfseries, title=#1}
+\newtcolorbox{myboxyellow}[1]{colback=yellow!5!white, colframe=red!75!black, fonttitle=\bfseries, title=#1}
+\newtcolorbox{myboxblue}[1]{colback=blue!5!white, colframe=blue!75!black, fonttitle=\bfseries, title=#1}
+
+\usepackage{hyperref}						% Extensive support for hypertext in LATEX
+\hypersetup{
+	colorlinks	= true,
+	linkcolor 	= black,
+	urlcolor	= blue,
+	breaklinks = true		
+}
+\usepackage[hyphenbreaks]{breakurl}			% Line-breakable \url-like links in hyperref when compiling via dvips/ps2pdf
+
+\newcommand{\hervorheben}[1]{\textsl{#1}}
+
+\usepackage{enumitem}% http://ctan.org/pkg/enumitem zur Anpassung von itemize und enumerate-Umgebungen [leftmargin=5mm,noitemsep,topsep=5pt,parsep=5pt,partopsep=0pt]
+
+\newcommand{\mystrut}{\rule[-3ex]{0ex}{8ex}} % für Tabellen mit tabularx
+
+%\renewcommand*{\dh}{d.~h.}
+
+\usepackage{tabto} %https://tex.stackexchange.com/questions/14038/tabbing-inside-itemize-or-itemize-inside-tabbing
+
+\newcommand*{\linie}{
+	
+	\vspace*{1ex}
+	
+	\hrulefill}
+
+% Erweiterung zu \phantom{}, so dass auch negative Abstände "eingefügt" werden können:
+
+\makeatletter
+\newlength{\negph@wd}
+\DeclareRobustCommand{\negphantom}[1]{%
+	\ifmmode
+	\mathpalette\negph@math{#1}%
+	\else
+	\negph@do{#1}%
+	\fi
+}
+\newcommand{\negph@math}[2]{\negph@do{$\m@th#1#2$}}
+\newcommand{\negph@do}[1]{%
+	\settowidth{\negph@wd}{#1}%
+	\hspace*{-\negph@wd}%
+}
+\makeatother
+
+%\usepackage{stackengine,graphicx}
+%\def\stacktype{L}
+%\def\useanchorwidth{T}
+%\newcommand\cancel[1]{\stackon[0pt]{#1}{\rotatebox{30}{\textcolor{red}{\rule{2.9ex}{1pt}}}}}
+
+\usepackage{cancel}
+\renewcommand{\CancelColor}{\color{red}}
+
+\usepackage{ulem}			% Package for underlining
+
+\usepackage{emptypage}
+
+%\usepackage{xparse}
+%
+%\DeclareDocumentCommand{\hcancel}{mO{0pt}O{0pt}O{0pt}O{0pt}}{%
+%	\tikz[baseline=(tocancel.base)]{
+%		\node[inner sep=0pt,outer sep=0pt] (tocancel) {#1};
+%		\draw[red] ($(tocancel.south west)+(#2,#3)$) -- ($(tocancel.north east)+(#4,#5)$);
+%	}%
+%}%
+%
+
+% zum schrägen Durchstreichen:
+
+\usepackage{keycommand}
+% Patch by Joseph Wright ("bug in the definition of \ifcommandkey (2010/04/27 v3.1415)"),
+% https://tex.stackexchange.com/a/35794
+\begingroup
+\makeatletter
+\catcode`\/=8 %
+\@firstofone
+{
+	\endgroup
+	\renewcommand{\ifcommandkey}[1]{%
+		\csname @\expandafter \expandafter \expandafter
+		\expandafter \expandafter \expandafter \expandafter
+		\kcmd@nbk \commandkey {#1}//{first}{second}//oftwo\endcsname
+	}
+}
+%--------%
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\newkeycommand{\hcancel}[hshiftstart=0pt,vshiftstart=0pt,hshiftend=0pt,vshiftend=0pt,color=red][1]{%
+	\tikz[baseline=(tocancel.base)]{
+		\node[inner sep=0pt,outer sep=0pt] (tocancel) {#1};
+		\draw[\commandkey{color}] ($(tocancel.south west)+(\commandkey{hshiftstart},\commandkey{vshiftstart})$) --
+		($(tocancel.north east)+(\commandkey{hshiftend},\commandkey{vshiftend})$);
+	}%
+}%
+
+
+% farbig unterstreichen:
+
+\newsavebox\MBox
+\newcommand\Cline[2][red]{{\sbox\MBox{$#2$}%
+		\rlap{\usebox\MBox}\color{#1}\rule[-1.2\dp\MBox]{\wd\MBox}{0.5pt}}}
+	
+
+\def\mathunderline#1#2{\color{#1}\underline{{#2}}}
+
+
+% farbig hervorheben in math
+
+\newcommand{\highlight}[2][red!50]{\mathpalette{\highlightwithstyle[#1]}{#2}}
+\newcommand{\highlightwithstyle}[3][red!50]{
+	\begingroup                         %% <- limit scope of \box0 and \fboxsep assignment
+	\sbox0{$\mathsurround 0pt #2#3$}% %% <- typeset content in box 0
+	\setlength{\fboxsep}{1pt}        %% <- set (smaller) framebox margins
+	\sbox2{\hspace{-.5pt}%            %% <- create box 2, undo margin
+		\colorbox{#1}{\usebox0}%        %% <- print the contents of box 0 in a \colorbox
+	}%
+	\dp2=\dp0 \ht2=\ht0 \wd2=\wd0     %% <- set dimensions of box 2 to match box 0
+	\box2                             %% <- print box 2
+	\endgroup                           %% <- revert old definitions of the boxes and \fboxsep
+}
+
+% für Tabellen
+\usepackage{array,booktabs,tabularx}
+\usepackage{ragged2e}
+
+% für dem Befehlt \Longunderstack{} in Tabellen 
+% Quelle: https://tex.stackexchange.com/a/183873/232548
+\usepackage[usestackEOL]{stackengine}
+\edef\tmp{\the\baselineskip}
+\setstackgap{L}{\tmp}
+
+% Funktioniert leider nicht:
+%% Für das Malteserkreuz - Quelle: https://tex.stackexchange.com/questions/202746/how-to-draw-an-actual-maltese-cross/202856#202856
+%\usepackage{fontspec}
+%\usepackage{mathtools}
+%\newcommand*{\amalfi}{\ensuremath{\text{\fontspec{code2000.ttf}\symbol{"2720}}}}
+
+\usepackage{scalerel}
+\newcommand{\maltcross}{\scalerel*{%
+		\tikz\fill
+		(0.02,0.02)    -- (0.2,0.5)   -- (0,0.4)  -- (-0.2,0.5)  --
+		(-0.02,0.02)   -- (-0.5,0.2)  -- (-0.4,0) -- (-0.5,-0.2) --
+		(-0.02,-0.02)  -- (-0.2,-0.5) -- (0,-0.4) -- (0.2,-0.5)  --
+		(0.02,-0.02)   -- (0.5,-0.2)  -- (0.4,0)  -- (0.5,0.2)   --
+		cycle;}% Scale this picture...
+	{0}% ...to the size of this symbol.
+}
+
+\usepackage{tcolorbox}
+
+%\usepackage[table]{xcolor}
+
+%\usepackage{booktabs} 
+
+% Text mit geschweifter Klammer und Text darunter
+\newcommand{\undertext}[2] {$\underbrace{\textrm{#1}}_{\textrm{#2}}$} % Quelle: https://tex.stackexchange.com/questions/128064/how-to-overbrace-underbrace-in-text-mode-using-tikz
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont für \cmark und \xmark
+\newcommand{\cmark}{\textcolor{green!50!black}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{red!100!black}{\ding{55}}}%
+
+\usepackage[autostyle,babel=true]{csquotes}	% Context sensitive quotation facilities
+\renewcommand{\enquote}[1]{\glqq #1\grqq{}}

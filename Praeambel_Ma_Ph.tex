@@ -1,0 +1,1287 @@
+\usepackage{expl3}							% für Berechnungen - siehe https://tex.stackexchange.com/questions/196171/inaccurate-pgf-calculation
+\ExplSyntaxOn
+\cs_set_eq:NN \fpeval \fp_eval:n
+\ExplSyntaxOff
+
+\usepackage{pgf}
+\usepackage{tkz-euclide}
+%\usepackage{amsfonts}						% TEX fonts from the American Mathematical Society
+\usepackage{wasysym}   						% Electrical and physical symbols \AC \HF \VHF \photon \gluon
+%\usepackage{mathtools}						% Mathematical tools to use with amsmath 
+\usepackage{amsmath}						% AMS mathematical facilities for LATEX
+\usepackage{amssymb}
+\usepackage{isotope}						% A package for typesetting isotopes
+%\usepackage{bohr}							% simple atom representation according to the Bohr model
+%\usepackage{elements}
+\usepackage[version=4]{mhchem}				% \ce{H2O}
+\usepackage{fixmath}						% für $\mathbold{x}$
+\usepackage{dsfont}							% Type­set math­e­mat­i­cal dou­ble stroke sym­bols
+\usepackage{float}
+%\usepackage{xfp}
+
+\usepackage{scalerel}
+\usepackage{stackengine}
+
+%\usepackage{bm} % für fette Mathematik
+
+\newcommand\reallywidetilde[1]{\ThisStyle{%
+		\setbox0=\hbox{$\SavedStyle#1$}%
+		\stackengine{-.5\LMpt}{$\SavedStyle#1$}{%
+			\stretchto{\scaleto{\SavedStyle\mkern.2mu\frown}{.4\wd0}}{.5\ht0}%
+		}{O}{c}{F}{T}{S}%
+}}
+
+\def\bogen#1{\ensuremath{\reallywidetilde{\text{#1}}}}
+
+\usepackage{mathtools}						% für \begin{spreadlines}{2ex} Abstand in align ändern \end{spreadlines}
+
+
+\usepackage{xstring}
+
+%\newcommand{\pkt}[3]{%
+%		\FPset\xpkt{#2}%
+%		\FPset\ypkt{#3}%
+%	\ensuremath{\text{#1}(\StrLeft{#2}{1}[\firstchar]\IfStrEq{\firstchar}{-}{\,}{\,}\num{\FPprint\xpkt}\,|\StrLeft{#3}{1}[\firstchari]\IfStrEq{\firstchari}{-}{\,}{\,}\num{\FPprint\ypkt}\,)}}
+
+\newcommand{\pkt}[3]{\ensuremath{\mathrm{#1}\left(\,\SIx{#2}{}\,\left|\,\SIx{#3}{}\right.\,\right)}}
+	
+%\newcommand{\pkti}[3]{\ensuremath{\text{#1}(\;#3\;|\;#2\;)}}
+%
+%\newcommand{\pktii}[3]{P$(-2\,|-8\,)$}
+
+
+%\newcommand{\pkt}[3]{% Funktioniert leider nur für Zahlen als Koordinaten...
+%	\FPset\x{#2}%
+%	\FPset\y{#3}%
+%	\ensuremath{\text{#1}%
+%	(%
+%	\FPiflt{\x}{0}
+%	%
+%	\else
+%	\,
+%	\fi%
+%	\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\x}\,|%
+%	\FPiflt{\y}{0}
+%	\else
+%	\,
+%	\fi%
+%	\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\y}\,)}
+%}
+
+%Taschenrechnerbefehl für Quad. ergänzen und Nullstellen:
+\newcommand{\trquad}[3]{
+	\FPset\a{#1}
+	\FPset\b{#2}
+	\FPset\c{#3}
+	\ensuremath{\textsf{TR  \; Menu \; A} \rightarrow 2 \rightarrow 2  \quad\; a=\num{\a}\; \rightarrow \; b=\num{\b}\; \rightarrow \; c=\num{\c}}}
+
+
+%\usepackage{xfp}					% Interface to the LATEX3 floating point unit
+%Taschenrechnerbefehl für Nullstellen und Extremwerte:
+\newcommand{\trquadl}[3]{			% "Taschenrechner quadratische Gleichung mit Lösung" Eingabe der Koeffizienten mit Dezimalpunkt! 
+	\FPset\a{#1}
+	\FPset\b{#2}
+	\FPset\c{#3}
+	\FPeval\d{b*b-4*a*c}			% Berechnung der Diskriminante
+	\ensuremath{
+	\textsf{TR  \; Menu \; A} \rightarrow 2 \rightarrow 2  \quad\; a=\num{\a}\; \rightarrow \; b=\num{\b}\; \rightarrow \; c=\num{\c} \\[0.5ex]  			% Eingabe am TaschenRechner
+%		(a=\a \quad b=\b \quad c=\c \quad D=\num[round-mode=places,round-precision=2]{\k}) \quad 
+	\FPifgt{\d}{0} 					% wenn D>0
+			\FPeval\e{round((-b+d^0.5)/(2*a),2)} % ohne round(...,2) kann auch mal "-0" rauskommen...
+			\FPeval\f{round((-b-d^0.5)/(2*a),2)}
+			\sisetup{round-mode=places,round-integer-to-decimal}
+			x_1=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e} \quad x_2=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\f} \qquad \mathds{L}=\{\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e}; \num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\f}\} \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d}>0)
+		\else 
+		\fi
+	\FPifeq{\d}{0} 					% wenn D=0
+			\FPeval\e{round((-b)/(2*a),2)} % 
+			x=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e} \qquad \mathds{L}=\{\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e}\} \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d})
+		\else 
+		\fi
+	\FPiflt{\d}{0} 					% wenn D<0
+			\mathds{L}=\varnothing \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d}<0)
+		\else 
+		\fi
+}	
+}
+
+\newcommand{\trquadnl}[5]{			% "Taschenrechner quadratische Gleichung mit Lösung" Eingabe der Koeffizienten mit Dezimalpunkt! 
+	\FPset\a{#1}
+	\FPset\b{#2}
+	\FPset\c{#3}
+	\FPeval\d{b*b-4*a*c}			% Berechnung der Diskriminante
+	\ensuremath{
+		\textsf{TR  \; Menu \; A} \rightarrow 2 \rightarrow 2  \quad\; a=\num{\a}\; \rightarrow \; b=\num{\b}\; \rightarrow \; c=\num{\c} \\[0.5ex]  			% Eingabe am TaschenRechner
+		%		(a=\a \quad b=\b \quad c=\c \quad D=\num[round-mode=places,round-precision=2]{\k}) \quad 
+		\FPifgt{\d}{0} 					% wenn D>0
+		\FPeval\e{round((-b+d^0.5)/(2*a),2)} % ohne round(...,2) kann auch mal "-0" rauskommen...
+		\FPeval\f{round((-b-d^0.5)/(2*a),2)}
+		\sisetup{round-mode=places,round-integer-to-decimal}
+		x_#4=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e} \quad x_#5=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\f} \qquad \mathds{L}=\{\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e}; \num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\f}\} \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d}>0)
+		\else 
+		\fi
+		\FPifeq{\d}{0} 					% wenn D=0
+		\FPeval\e{round((-b)/(2*a),2)} % 
+		x=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e} \qquad \mathds{L}=\{\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\e}\} \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d})
+		\else 
+		\fi
+		\FPiflt{\d}{0} 					% wenn D<0
+		\mathds{L}=\varnothing \quad (D=\num[round-mode=places,round-precision=2,zero-decimal-to-integer]{\FPprint\d}<0)
+		\else 
+		\fi
+	}	
+}
+
+%Taschenrechnerbefehl für Lineares Gleichungssystem:
+\newcommand{\trlgs}[6]{\ensuremath{\textsf{TR  \; Menu \; A} \rightarrow 1 \rightarrow 2  \quad\; #1 \; \rightarrow \; #2 \; \rightarrow \; #3 \quad \rightarrow \quad  #4 \; \rightarrow \; #5 \; \rightarrow \; #6}}
+
+\usepackage{siunitx}						% A comprehensive (SI) units package
+	\sisetup{output-decimal-marker = {,}}	% Komma als Dezimaltrennzeichen für siunitx
+	\sisetup{exponent-product = \cdot}		% Punkt statt x zwischen Zahl und Zehnerpotenz
+	\sisetup{per-mode = fraction, fraction-function=\tfrac}			% Bruchstrich in Einheit
+%	\sisetup{inter-unit-product = \ensuremath{{}\cdot{}}}
+	\sisetup{inter-unit-product = \cdot}
+	\sisetup{detect-weight=true, detect-family=true} 
+	\sisetup{detect-all=true} % für fettes SI - Quelle: https://tex.stackexchange.com/questions/610211/how-to-have-bold-unit-with-siunitx
+%	\sisetup{detect-weight=true, detect-family=true, mode=text} 
+		% für fettes SI Quelle: https://tex.stackexchange.com/questions/612182/siunitx-bold-units-in-math-mode
+		% Quelle: https://tex.stackexchange.com/questions/193389/siunitx-per-mode-fraction-in-displaystyle-with-tfrac
+%	\sisetup{round-integer-to-decimal}
+	\DeclareSIUnit\As{\text{As}}
+	\DeclareSIUnit\Ah{\text{Ah}}
+	\DeclareSIUnit\mAh{\text{mAh}}
+	\DeclareSIUnit{\liter}{\ell}
+	\DeclareSIPrefix\hekto{h}{h}
+	\DeclareSIPrefix\zpmzwei{10^{-2}\,}{-2}
+	\DeclareSIPrefix\zpmdrei{10^{-3}\,}{-3}
+	\DeclareSIPrefix\zpmvier{10^{-4}\,}{-4}
+	\DeclareSIPrefix\zpmsechs{10^{-6}\,}{-6}
+%
+	\DeclareSIPrefix\zppzwei{10^{2}\,}{2}
+	\DeclareSIPrefix\zppdrei{10^{3}\,}{3}
+	\DeclareSIPrefix\zppvier{10^{4}\,}{4}
+	\DeclareSIPrefix\zppzweicenti{10^{2}\,c}{4}
+	\DeclareSIPrefix\zppzweideci{10^{2}\,d}{4}
+	\DeclareSIPrefix\zppdreideci{10^{3}\,d}{4}
+	\DeclareSIPrefix\zppviercenti{10^{4}\,c}{4}
+	\DeclareSIPrefix\zppfuenf{10^{5}\,}{5}
+	\DeclareSIPrefix\zppsechs{10^{6}\,}{6}
+\newcommand{\SIx}[2]{\SI[parse-numbers = false]{\text{$#1$}}{#2}}%damit gehen auch beliebige Terme als \num in \SI{\num}{\unit}
+
+\AtBeginDocument{\DeclareSIUnit{\Wh}{Wh}}
+\AtBeginDocument{\DeclareSIUnit{\kWh}{kWh}}
+\AtBeginDocument{\DeclareSIUnit{\MWh}{MWh}}
+\AtBeginDocument{\DeclareSIUnit{\GWh}{GWh}}
+\AtBeginDocument{\DeclareSIUnit{\ct}{ct}}
+\AtBeginDocument{\DeclareSIUnit{\EUR}{EUR}}
+\AtBeginDocument{\DeclareSIUnit{\impuls}{Impulse}}
+\AtBeginDocument{\DeclareSIUnit{\year}{a}}
+%\AtBeginDocument{\DeclareSIUnit{\hekto}{h}}
+\AtBeginDocument{\DeclareSIUnit{\c}{c}}
+\AtBeginDocument{\DeclareSIUnit{\e}{e}}
+\AtBeginDocument{\DeclareSIUnit{\MeV}{MeV}}
+%\AtBeginDocument{\DeclareSIUnit{\giga}{G}}
+%\AtBeginDocument{\DeclareSIUnit{\mega}{M}}
+%\AtBeginDocument{\DeclareSIUnit{\kilo}{k}}
+%\AtBeginDocument{\DeclareSIUnit{\deca}{da}}
+%\AtBeginDocument{\DeclareSIUnit{\deka}{da}}
+%\AtBeginDocument{\DeclareSIUnit{\deci}{d}}
+%\AtBeginDocument{\DeclareSIUnit{\centi}{c}}
+%\AtBeginDocument{\DeclareSIUnit{\milli}{m}}
+%\AtBeginDocument{\DeclareSIUnit{\micro}{\text{$\umu$}}}
+%\AtBeginDocument{\DeclareSIUnit{\nano}{n}}
+
+
+
+
+
+
+
+
+
+%Befehl für (leere) Koordinatensysteme: \kos{links}{unten}{rechts}{oben}. Beschriftet mit der Eins in jede Richtung und dem minimalen bzw. maximalen Wert.   
+\newcommand{\kos}[4]{
+	\clip (#1-0.5,#2-0.5) rectangle (#3+1,#4+1);
+	\draw [color=gray!50]  [step=5mm] (#1-1,#2-1) grid (#3+1,#4+1); %Raster zeichnen
+	\draw[->,thick] (#1-0.5,0) -- (#3+0.5,0) node[right] {$x$}; % x-Achse zeichnen
+	\draw[->,thick] (0,#2-0.5) -- (0,#4+0.5) node[above] {$y$}; % y-Achse zeichnen
+	\foreach \x in {#1,-1,1,#3} \draw (\x,-.1)--(\x,.1) node[below=4pt] {$\scriptstyle\x$};%x-Achse beschriften
+	\foreach \y in {#2,-1,1,#4} \draw (-.1,\y)--(.1,\y) node[left=4pt] {$\scriptstyle\y$};   % y-Achse beschriften
+	\draw[color=black] (-4pt,-6pt) node[] {$0$};     % schöner Ursprung
+	\path[name path=rahmen,clip](#1-0.5,#2-0.5) rectangle (#3+0.5,#4+0.5);
+}
+
+%Lineares Gleichungssystem, 4 Argumente: 1. Zeile links, rechts, 2. Zeile links rechts:
+\newcommand{\lgs}[4]{
+	\begin{tabular}{|lrcl}
+		&$#1$&=&$#2$\\$\land$&$#3$&=&$#4$\\\hline
+	\end{tabular}}
+
+
+
+\newcommand{\kommando}{\qquad\rule[-1ex]{0.5pt}{3ex}\hspace*{1ex}}
+\usepackage{etoolbox}% for \ifblank{#3}{true}{false}
+%\lings wie \lgs nur mit zwei zusätzlichen Argumenten für etwaige Äquivalenzumformungen
+\newcommand{\lings}[6]{
+	\begin{tabular}{rrcll}
+				I	&$#1$\!\!\!&=&\!\!\!$#2$&$\ensuremath{\ifblank{#3}{}{\qquad\rule[-1ex]{0.5pt}{3ex}\hspace*{1ex} #3}}$\\[0.5ex] 
+	$\wedge$	II	&$#4$\!\!\!&=&\!\!\!$#5$&$\ensuremath{\ifblank{#6}{}{\qquad\rule[-1ex]{0.5pt}{3ex}\hspace*{1ex} #6}}$\\\cline{1-4} 
+	\end{tabular}
+	}
+
+
+
+\newcommand{\linievar}[1]{{\color{gray}{\hdashrule{#1}{.5pt}{3pt}}}}%Linien mit variabler Länge: \linie{länge mit Einheit}
+
+%%kleinergleich und größergleich wie in der Realschule verlangt (nicht mehr im LP+!!!) (mit Doppelstrich):
+%\renewcommand{\leq}{\leq}\renewcommand{\geq}{\geq}
+
+\newcommand{\laenge}[1]{\ensuremath{\left|\overline{\text{#1}}\right|}}%Die Streckenlänge \laenge{}, muss mit dem neuen Lehrplan geändert werden!
+\newcommand{\strecke}[1]{\ensuremath{\overline{\text{#1}}}}%Die Strecke \strecke{}, muss mit dem neuen Lehrplan geändert werden!
+\newcommand{\gerade}[1]{#1}
+%\newcommand{\winkel}[1]{\ensuremath{\sphericalangle \text{#1}}}
+\newcommand{\winkel}[1]{\ensuremath{\varangle \text{#1}}}
+\newcommand{\dreieck}[1]{\ensuremath{\bigtriangleup\text{#1}}}
+
+
+%Optionaler Parameter bei \draw: extended line für Geraden und Co:
+\tikzset{dot/.style={label={#1},name=#1},
+	extended line/.style={shorten >=-#1,shorten <=-#1},
+	extended line/.default=1cm]}
+
+%Punkte mit Kreuzchen markiert:(funktioniert nur in Tikz-Picture-Umgebung!) zuerst name, dann x dann y, dann Position
+\tikzset{point/.style={thick, draw=black,cross out, inner sep=0pt, minimum width=4pt, minimum height=4pt}}
+\newcommand{\punkt}[4]{\coordinate[label=#4:$#1$, point](#1) at (#2,#3);}
+
+\newcommand{\determinante}[4]{\begin{vmatrix} #1 & #2\\#3 & #4\\\end{vmatrix}}%Befehl für Determinanten, zeilenweise: zuerst die x-Werte, dann die y-Werte. Benötigt den Mathemodus
+
+\newcommand{\vektor}[2]{\dbinom{#1}{#2}}%Befehl, um einen Vektor in der Spaltenschreibweise zu erstellen
+
+%\newcommand{\entspricht}{\widehat{=}}%das entspricht-Zeichen
+
+\newcommand\entspricht{\mathrel{\stackon[1.5pt]{=}{\stretchto{\scalerel*[\widthof{=}]{\wedge}{\rule{1ex}{3ex}}}{0.5ex}}}} %Quelle: https://tex.stackexchange.com/questions/103408/symbol-for-corresponds-to-equals-sign-with-hat%
+
+
+%\newcommand{\platzbedarf}[4]{(Platzbedarf: $#1\leq x\leq #2$; $#3\leq y\leq 4$)}
+\newcommand{\platzbedarf}[4]{Für die Zeichnung: \; Längeneinheit \SI{1}{\centi \meter};  \; $#1\leq x\leq #2$; \; $#3\leq y\leq #4$}
+
+\usepackage[school]{pgf-umlcd}%Objektkarten mit dem package pgf-umlcd
+\renewcommand{\umltextcolor}{black}%Textfarbe von Objektkarten:
+\renewcommand{\umldrawcolor}{black}%Linienfarbe von Objektkarten:
+\renewcommand{\umlfillcolor}{white}%Hintergrundfarbe von Objektkarten:
+
+\newcommand{\kosy}[5]{
+	\begin{center}
+		\tikzstyle{background grid}=[draw, black!20,step=5mm,line width=1pt]
+		\begin{tikzpicture}[scale=1.0,samples=400%
+		%			,show background grid
+		]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left =5pt] (0,0) {O};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,-1,1,2,...,\xmaxtick}
+		{
+			\draw node[anchor=north,fill=white, fill opacity=0.7] at (\x,-0.2) {\x};
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.2) {\x};
+		}		
+		
+		\foreach \y in {\ymintick,...,-1,1,2,...,\ymaxtick}
+		{
+			\draw node[anchor=east,fill=white, fill opacity=0.7] at (-0.1,\y) {\y};
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) {\y};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[below right = 4pt]{$x$};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above left = 4pt]{$y$};
+		
+		#5
+		
+		\end{tikzpicture}
+	\end{center}
+}
+
+
+%Braucht man für das kosycustomi:
+
+\usepackage{fp}
+\usepackage{pgfkeys,pgfmath,pgfcore}
+
+\pgfkeys{
+	/textnumber/.style={
+		/pgf/number format/.cd,% <- changes the prefix for the following options
+		fixed,
+		use comma,
+		fixed zerofill,
+		precision=0, % Hier kann man die Anzahl der Nachkommastellen für das KOSY eintragen
+		1000 sep={.},
+	},
+}
+
+%Braucht man für das kosycustomii:
+
+\pgfkeys{
+	/textnumber2/.style={
+		/pgf/number format/.cd,% <- changes the prefix for the following options
+%		fixed,
+		use comma,
+		fixed zerofill,
+		precision=2, % Hier kann man die Anzahl der Nachkommastellen für das KOSY eintragen
+		1000 sep={.},
+	},
+}
+
+
+\newcommand{\kosycustomi}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+2}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			%			\draw node[anchor=north,fill=white, fill opacity=0.9] at (\x,0) {\footnotesize \resultx};
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) {\footnotesize \pgfmathprintnumber[/textnumber]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*(\y)}
+			%			\draw node[anchor=east,fill=white, fill opacity=0.9] at (0,\y) {\footnotesize \resulty};
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) {\footnotesize \pgfmathprintnumber[/textnumber]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[right]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosyquali}[7]{ % qualitatives Diagramm ohne Skalierung
+	\begin{center}
+		\begin{tikzpicture}[scale=0.707,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+2}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!80,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+%		% Ursprung
+%		
+%		\node[below left=2pt] (0,0) {\footnotesize 0};
+%		
+%		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+%		
+%		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+%		{
+%			\pgfmathsetmacro\resultx{#7*\x}
+%			%			\draw node[anchor=north,fill=white, fill opacity=0.9] at (\x,0) {\footnotesize \resultx};
+%			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) {\footnotesize \pgfmathprintnumber[/textnumber]{\resultx}};
+%		}		
+%		
+%		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+%		{
+%			\pgfmathsetmacro\resulty{#8*(\y)}
+%			%			\draw node[anchor=east,fill=white, fill opacity=0.9] at (0,\y) {\footnotesize \resulty};
+%			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) {\footnotesize \pgfmathprintnumber[/textnumber]{\resulty}};
+%		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[right]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above, yshift=0.5ex]{#6};
+			
+		#7
+						
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosycustomii}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+				{\footnotesize \num[round-mode=figures,round-precision=2]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*\y}
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+				{\footnotesize \num[round-mode=figures,round-precision=2]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-8mm]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above, , yshift=1mm]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosycustomiii}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+			{\footnotesize \num[round-mode=figures,round-precision=3]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*\y}
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+			{\footnotesize \num[round-mode=figures,round-precision=2]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-8mm]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosycustomiv}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+			{\footnotesize \num[round-mode=places,round-precision=1]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*\y}
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+			{\footnotesize \num[round-mode=places,round-precision=1]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-8mm]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosycustomiiinkii}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+			{\footnotesize \num[round-mode=places,round-precision=3]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*\y}
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+			{\footnotesize \num[round-mode=places,round-precision=2]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-8mm]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+\newcommand{\kosycustomiink}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=1,samples=400]
+		
+		%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathsetmacro{\xmin}{#1}
+		\pgfmathsetmacro{\xmax}{#2}
+		\pgfmathsetmacro{\ymin}{#3}
+		\pgfmathsetmacro{\ymax}{#4}
+		
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+		\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+		\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+		\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+		
+		\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+		\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+		\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+		\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+		
+		\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+		\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+		\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+		\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+		
+		% Definition des Gitters und das Gitter selbst
+		
+		\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+		\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+		
+		% Ursprung
+		
+		\node[below left=2pt] (0,0) {\footnotesize 0};
+		
+		% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+		
+		\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+		{
+			\pgfmathsetmacro\resultx{#7*\x}
+			\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+			{\footnotesize \num[round-mode=places,round-precision=2]{\resultx}};
+		}		
+		
+		\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+		{
+			\pgfmathsetmacro\resulty{#8*\y}
+			\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+			{\footnotesize \num[round-mode=places,round-precision=2]{\resulty}};
+		}
+		
+		% Koordinatenachsen und Beschriftung mit $x$ und $y$
+		
+		\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+		\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+		#9
+		
+		\end{tikzpicture}
+	\end{center}
+}	
+
+\newcommand{\kosycustomdreizweink}[9]{
+	\begin{center}
+		\begin{tikzpicture}[scale=0.72,samples=400]
+			
+			%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathsetmacro{\xmin}{#1}
+			\pgfmathsetmacro{\xmax}{#2}
+			\pgfmathsetmacro{\ymin}{#3}
+			\pgfmathsetmacro{\ymax}{#4}
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+			\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+			\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+			\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+			
+			\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+			\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+			\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+			\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+			
+			\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+			\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+			\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+			\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+			
+			% Definition des Gitters und das Gitter selbst
+			
+			\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+			\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+			
+			% Ursprung
+			
+			\node[below left=2pt] (0,0) {\footnotesize 0};
+			
+			% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+			
+			\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+			{
+				\pgfmathsetmacro\resultx{#7*\x}
+				\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+				{\scriptsize \num[round-mode=places,round-precision=3]{\resultx}};
+			}		
+			
+			\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+			{
+				\pgfmathsetmacro\resulty{#8*\y}
+				\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+				{\scriptsize \num[round-mode=places,round-precision=2]{\resulty}};
+			}
+			
+			% Koordinatenachsen und Beschriftung mit $x$ und $y$
+			
+			\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+			\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+			
+			#9
+			
+		\end{tikzpicture}
+	\end{center}
+}	
+
+
+\newcommand{\kosycustomdreieinsnk}[9]{
+%	\begin{center}
+		\begin{tikzpicture}[scale=0.72,samples=400]
+			
+			%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathsetmacro{\xmin}{#1}
+			\pgfmathsetmacro{\xmax}{#2}
+			\pgfmathsetmacro{\ymin}{#3}
+			\pgfmathsetmacro{\ymax}{#4}
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+			\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+			\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+			\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+			
+			\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+			\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+			\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+			\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+			
+			\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+			\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+			\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+			\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+			
+			% Definition des Gitters und das Gitter selbst
+			
+			\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+			\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+			
+			% Ursprung
+			
+			\node[below left=2pt] (0,0) {\footnotesize 0};
+			
+			% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+			
+			\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+			{
+				\pgfmathsetmacro\resultx{#7*\x}
+				\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+				{\scriptsize \num[round-mode=places,round-precision=3]{\resultx}};
+			}		
+			
+			\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+			{
+				\pgfmathsetmacro\resulty{#8*\y}
+				\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+				{\scriptsize \num[round-mode=places,round-precision=1]{\resulty}};
+			}
+			
+			% Koordinatenachsen und Beschriftung mit $x$ und $y$
+			
+			\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+			\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+			
+			#9
+			
+		\end{tikzpicture}
+%	\end{center}
+}	
+
+\newcommand{\kosycustomdreidreink}[9]{
+	%	\begin{center}
+		\begin{tikzpicture}[scale=0.72,samples=400]
+			
+			%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathsetmacro{\xmin}{#1}
+			\pgfmathsetmacro{\xmax}{#2}
+			\pgfmathsetmacro{\ymin}{#3}
+			\pgfmathsetmacro{\ymax}{#4}
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+			\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+			\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+			\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+			
+			\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+			\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+			\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+			\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+			
+			\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+			\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+			\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+			\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+			
+			% Definition des Gitters und das Gitter selbst
+			
+			\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+			\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+			
+			% Ursprung
+			
+			\node[below left=2pt] (0,0) {\footnotesize 0};
+			
+			% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+			
+			\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+			{
+				\pgfmathsetmacro\resultx{#7*\x}
+				\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+				{\scriptsize \num[round-mode=places,round-precision=3]{\resultx}};
+			}		
+			
+			\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+			{
+				\pgfmathsetmacro\resulty{#8*\y}
+				\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+				{\scriptsize \num[round-mode=places,round-precision=3]{\resulty}};
+			}
+			
+			% Koordinatenachsen und Beschriftung mit $x$ und $y$
+			
+			\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+			\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+			
+			#9
+			
+		\end{tikzpicture}
+		%	\end{center}
+}	
+
+\newcommand{\kosycustomzweizweink}[9]{
+	%	\begin{center}
+	\begin{tikzpicture}[scale=1.00,samples=400]
+	
+	%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathsetmacro{\xmin}{#1}
+	\pgfmathsetmacro{\xmax}{#2}
+	\pgfmathsetmacro{\ymin}{#3}
+	\pgfmathsetmacro{\ymax}{#4}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+	\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+	\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+	\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+	
+	\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+	\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+	\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+	\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+	
+	\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+	\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+	\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+	\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+	
+	% Definition des Gitters und das Gitter selbst
+	
+	\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+	\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+	
+	% Ursprung
+	
+	\node[below left=2pt] (0,0) {\footnotesize 0};
+	
+	% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+	
+	\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+	{
+		\pgfmathsetmacro\resultx{#7*\x}
+		\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+		{\scriptsize \num[round-mode=places,round-precision=2]{\resultx}};
+	}		
+	
+	\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+	{
+		\pgfmathsetmacro\resulty{#8*\y}
+		\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+		{\scriptsize \num[round-mode=places,round-precision=2]{\resulty}};
+	}
+	
+	% Koordinatenachsen und Beschriftung mit $x$ und $y$
+	
+	\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+	\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+	
+	#9
+	
+	\end{tikzpicture}
+	%	\end{center}
+}	
+
+\newcommand{\kosycustomscale}[9]{
+	%	\begin{center}
+	\begin{tikzpicture}[scale=#9,samples=400]
+	
+	%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathsetmacro{\xmin}{#1}
+	\pgfmathsetmacro{\xmax}{#2}
+	\pgfmathsetmacro{\ymin}{#3}
+	\pgfmathsetmacro{\ymax}{#4}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+	\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+	\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+	\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+	
+	\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+	\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+	\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+	\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+	
+	\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+	\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+	\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+	\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+	
+	% Definition des Gitters und das Gitter selbst
+	
+	\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+	\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+	
+	% Ursprung
+	
+	\node[below left=2pt] (0,0) {\footnotesize 0};
+	
+	% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+	
+	\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+	{
+		\pgfmathsetmacro\resultx{#7*\x}
+		\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+		{\scriptsize \num[round-mode=places,round-precision=0]{\resultx}};
+	}		
+	
+	\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+	{
+		\pgfmathsetmacro\resulty{#8*\y}
+		\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+		{\scriptsize \num[round-mode=places,round-precision=0]{\resulty}};
+	}
+	
+	% Koordinatenachsen und Beschriftung mit $x$ und $y$
+	
+	\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[left, xshift=-0mm, yshift=-3ex]{#5};   
+	\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[above]{#6};
+		
+	\end{tikzpicture}
+	%	\end{center}
+}	
+
+\newcommand{\kosycustommech}[9]{
+	%	\begin{center}
+	\begin{tikzpicture}[scale=1,samples=400]
+	
+	%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathsetmacro{\xmin}{#1}
+	\pgfmathsetmacro{\xmax}{#2}
+	\pgfmathsetmacro{\ymin}{#3}
+	\pgfmathsetmacro{\ymax}{#4}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+	\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+	\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+	\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+	
+	\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+	\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+	\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+	\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+	
+	\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+	\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+	\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+	\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+	
+	% Definition des Gitters und das Gitter selbst
+	
+	\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+	\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+	
+	% Ursprung
+	
+	\node[below left=3pt] (0,0) {\footnotesize 0};
+	
+	% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+	
+	\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+	{
+		\pgfmathsetmacro\resultx{#7*\x}
+		\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+		{\scriptsize \num[round-mode=places,round-precision=#9]{\resultx}};
+	}		
+	
+	\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+	{
+		\pgfmathsetmacro\resulty{#8*\y}
+		\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+		{\scriptsize \num[round-mode=places,round-precision=#9]{\resulty}};
+	}
+	
+	% Koordinatenachsen und Beschriftung mit $x$ und $y$
+	
+	\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[xshift=-0mm, yshift=-4.5ex]{#5};   
+	\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[yshift=1.5ex]{#6};
+	
+	\end{tikzpicture}
+	%	\end{center}
+}	
+
+\newcommand{\kosycustommechleer}[9]{
+	%	\begin{center}
+	\begin{tikzpicture}[scale=1,samples=400]
+	
+	%% Größe des KOSYs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathsetmacro{\xmin}{#1}
+	\pgfmathsetmacro{\xmax}{#2}
+	\pgfmathsetmacro{\ymin}{#3}
+	\pgfmathsetmacro{\ymax}{#4}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\pgfmathtruncatemacro{\xmintick}{1+\xmin}
+	\pgfmathtruncatemacro{\xmaxtick}{\xmax}
+	\pgfmathtruncatemacro{\ymintick}{1+\ymin}
+	\pgfmathtruncatemacro{\ymaxtick}{\ymax}
+	
+	\pgfmathtruncatemacro{\xmingrid}{\xmin-1}
+	\pgfmathtruncatemacro{\xmaxgrid}{\xmax+1}
+	\pgfmathtruncatemacro{\ymingrid}{\ymin-1}
+	\pgfmathtruncatemacro{\ymaxgrid}{\ymax+1}
+	
+	\pgfmathsetmacro{\xminkosy}{\xmin-0.5}
+	\pgfmathsetmacro{\xmaxkosy}{\xmax+0.5}
+	\pgfmathsetmacro{\yminkosy}{\ymin-0.5}
+	\pgfmathsetmacro{\ymaxkosy}{\ymax+0.5}
+	
+	% Definition des Gitters und das Gitter selbst
+	
+	\tikzstyle{dotted}= [dash pattern=on 0.15mm off 0.85mm]
+	\draw[help lines,line width=0.15mm,step=0.5,style=dotted,black!20,line cap=round] (\xmingrid,\ymingrid) grid (\xmaxgrid,\ymaxgrid);
+	
+	% Ursprung
+	
+	\node[below left=3pt] (0,0) {\footnotesize 0};
+	
+	% Beschriftung der Koordinatenachsen mit Ticks (muss vor den Achsen selbst kommen, sonst sind die Achsen z. T. abgedeckt)
+	
+	\foreach \x in {\xmintick,...,1,2,3,...,\xmaxtick}
+	{
+		\pgfmathsetmacro\resultx{#7*\x}
+		\draw (\x,0pt) -- (\x,-2pt) node[anchor=north] at (\x,-0.1) 
+		{\scriptsize \textcolor{white}{\num[round-mode=places,round-precision=#9]{\resultx}}};
+	}		
+	
+	\foreach \y in {\ymintick,...,1,2,3,...,\ymaxtick}
+	{
+		\pgfmathsetmacro\resulty{#8*\y}
+		\draw (0pt,\y) -- (-2pt,\y) node[anchor=east] at (-0.1,\y) 
+		{\scriptsize \textcolor{white}{\num[round-mode=places,round-precision=#9]{\resulty}}};
+	}
+	
+	% Koordinatenachsen und Beschriftung mit $x$ und $y$
+	
+	\draw[-latex,line width=0.2mm] (\xminkosy,0) --(\xmaxkosy,0) node[xshift=-1.5ex, yshift=-4.5ex]{#5};   
+	\draw[-latex,line width=0.2mm] (0,\yminkosy) --(0,\ymaxkosy) node[yshift=1.5ex]{#6};
+	
+	\end{tikzpicture}
+	%	\end{center}
+}	
+
+
+\newcommand{\D}{\displaystyle}
+
+\usepackage[b]{esvect}	%https://www.ctan.org/pkg/esvect
+
+%\usepackage{nccmath} %nccmath adds an optional argument to  \intertext, which is added to the vertical spacing of this command. Macht einen Fehler bei Lückentext-Formeln (werdn zu hoch gezogen...)
+
+%\tikzset{circuit declare symbol = AC source}
+%\tikzset{AC source IEC graphic/.style={
+%		circuit symbol lines,
+%		circuit symbol size=width 2 height 2,
+%		shape=generic circle IEC,
+%		/pgf/generic circle IEC/before background={
+%			\pgfpathmoveto{\pgfpoint{-0.8pt}{0pt}}
+%			\pgfpathsine{\pgfpoint{0.4pt}{0.4pt}}
+%			\pgfpathcosine{\pgfpoint{0.4pt}{-0.4pt}}
+%			\pgfpathsine{\pgfpoint{0.4pt}{-0.4pt}}
+%			\pgfpathcosine{\pgfpoint{0.4pt}{0.4pt}}
+%			\pgfusepath{stroke}
+%		},
+%		transform shape, draw
+%	}
+%}
+%\tikzset{circuit ee IEC/.append style=
+%	{set AC source graphic = AC source IEC graphic}
+%}
+
+% für dicke Bruchstriche:
+\newcommand{\thickfrac}[2]{\genfrac{}{}{1pt}{}{#1}{#2}}

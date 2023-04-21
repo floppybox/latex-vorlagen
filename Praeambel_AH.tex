@@ -1,0 +1,137 @@
+\usepackage{geometry}
+\geometry{%
+	a4paper,
+%	verbose, 
+	tmargin=9mm,
+	bmargin=18mm,
+	lmargin=24mm,
+	rmargin=24mm,
+	footskip=3mm, % Hiermit wird der vertikale Abstand zwischen der untersten Fußnote und der horizontalen Linie am unteren Ende der Seite angepasst.
+	marginpar=0cm, % <====================================================
+%		showframe % <= Anzeige des Rahmens auf der Seite - nur zur Kontrolle einschalten
+}
+
+% Anpassung der Fußnoten - siehe auch Anpassungen über geometry in Praeambel_AH.tex
+\usepackage[hang, flushmargin, bottom]{footmisc}
+\addtolength{\footnotesep}{1mm}
+
+\extrafootheight{-6mm}
+
+%\pagestyle{empty}  %auskommentiert, denn sonst wird die Fußzeile nicht angezeigt...
+
+%%%%% \setlength %%%%%
+\setlength{\parindent}{0em}       % kein Erstzeileneinzug
+%\setlength{\textheight}{282mm} 
+%\setlength{\textwidth}{167mm}
+%\setlength{\oddsidemargin}{0mm} 
+%\setlength{\evensidemargin}{-8mm} 
+%\setlength{\topmargin}{-25mm}
+%\setlength{\marginparsep}{8mm}
+%\setlength{\rightpointsmargin}{3mm}
+%%%%% \setlength %%%%%
+
+%Lückentext: \luecke{Text, der in der Lücke steht} und eine Umgebung lueckentext, die dafür sorgt, dass richtig umgebrochen und der Zeilenabstand hochgesetzt wird.  (damit die Schüler Platz zum Schreiben haben)
+
+\usepackage{setspace}
+\newenvironment{lueckentext}
+{\raggedright\begin{spacing}{1.7}}
+	{\end{spacing}}
+\newlength{\diebox}
+\newcommand{\luecke}[1]{
+	\settowidth{\diebox}{#1}
+	\ifprintanswers
+	\raisebox{0.1ex}{\parbox{2.3\diebox}{\textbf{\textcolor{magenta!100!black}{\rule[-2ex]{0pt}{5ex}#1}}}}
+	\else
+	%	\raisebox{-0.5ex}{\parbox{2.3\diebox}{\hrulefill}	}
+	\raisebox{-0.5ex}{\parbox{2.3\diebox}{\rule[-1ex]{0pt}{5ex}\begin{tikzpicture}   
+			\draw[color=gray, text=gray, dashed](0 ,0)--(\linewidth,0 );
+			\end{tikzpicture}}	}
+	\fi}  
+
+
+
+%Umgebung für 1., 2., 3. (Aufgaben und Beispiele):
+\newenvironment{aufzaehlung}
+{\begin{enumerate}}
+	{\end{enumerate}}
+
+%Befehl, um Beispiele, Aufgaben und Herleitungen (Miniüberschriften) hervorzuheben:
+\newcommand{\ueber}[1]{\par\medskip\textbf{#1}\par\smallskip}
+
+%Befehl, um Latex beizubringen, was er beim \liniert{}-Befehl tun soll:
+\newcommand{\liniert}[1]
+{\par\noindent
+	\begin{tikzpicture}   
+	\clip (0,.85) rectangle(\linewidth, 0.9*(#1+1);
+	\foreach \n in {1,...,#1}{\draw[color=gray, text=gray, dashed](0 ,0.9*\n )--(\linewidth,0.9*\n );}
+	\end{tikzpicture}}
+
+%Befehl, um Latex beizubringen, was er beim \kariert{}-Befehl tun soll:
+\newcommand{\kariert}[1]{
+	\par\noindent
+	\begin{tikzpicture} 
+	\clip (0,-0.05) rectangle (\linewidth-3pt,#1/2) ;   
+	\draw[step=0.5,color=gray, dashed] (0,0) grid (\linewidth,#1/2); %Anzahl der Kästchenreihen
+	\end{tikzpicture}}
+
+%Befehl, um Latex beizubringen, was er beim \kariertprog{}-Befehl tun soll: (Karopapier mit Einrückungshilfe)
+\newcommand{\kariertprog}[1]{
+	\par\noindent
+	\begin{tikzpicture} 
+	\clip (0,-0.05) rectangle (\linewidth,#1/2) ;   
+	\draw[step=0.5,color=gray, dashed] (0,0) grid (\linewidth,#1/2); %Anzahl der Kästchenreihen
+	%\draw[step=1.5,color=gray] (0,0) grid (\linewidth,#1/2);
+	\draw[gray] (1.5,0)--(1.5,#1/2);
+	\draw[gray] (3,0)--(3,#1/2);
+	\draw[gray] (4.5,0)--(4.5,#1/2);
+	\draw[gray] (6,0)--(6,#1/2);
+	\end{tikzpicture}}
+
+%Befehl, um Latex beizubringen was er beim \platz{}-Befehl tun soll. Benutzen, um einen Kasten um Freiplatz für Aufgaben zu ziehen. Angabe der Höhe in Zentimeter.
+\newcommand{\platz}[1]{
+	\par\medskip\noindent
+	\begin{tikzpicture}       
+	\draw[dashed, color=gray] (0,0) -- (\linewidth,0) -- (\linewidth,#1) -- (0,#1) -- (0,0);
+	\end{tikzpicture}}
+
+\newcommand{\filluptopage}[1]{%
+	\clearpage
+	\loop\ifnum\value{page}<#1\relax
+	\null\clearpage
+	\repeat
+}
+
+%%Das package Version erlaubt verschiedene Modi: bei mir schueler und lehrer, standardmäßig wird die Lehrerversion gezeigt. Arbeitet mit exam und article, Schalter \printanswerstrue bzw. false
+\RequirePackage{versions}
+\usepackage{soulutf8}
+%\includeversion{lehrer}\excludeversion{schueler}\printanswerstrue
+\includeversion{eltern}\excludeversion{schueler}\printanswerstrue
+
+%%%Definition der Lehrerumgebung, so dass sie heraussticht:
+%\let\FMlehrer\lehrer
+%\let\endFMlehrer\endlehrer
+%\DeclareOption{hervorheben}{\renewenvironment{lehrer}
+%	{\begin{color}{blue}\FMlehrer}
+%		{\endFMlehrer \end{color}}
+%}
+
+
+%\m um wichtige Begriffe rot zu setzen:
+\newcommand{\m}[1]{\textcolor{red}{#1}}
+
+%\merke setzt einen Rahmen und fügt das Merke hinzu:
+\RequirePackage[most]{tcolorbox}
+\NewDocumentCommand{\merke}{o m}
+{\vspace*{.2cm}
+	\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=\IfValueTF{#1}{#1}{Merke},fonttitle=\bfseries]
+		#2
+	\end{tcolorbox}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%https://tobiw.de/tbdm/lueckentexte
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\def\zz{\leavevmode\vrule height 10pt\nobreak\leaders\vbox{\vskip-.4pt\hrule width .4pt\vskip 10pt \hrule\vskip-.4pt} \hskip 15em minus 15em \nobreak\hbox{\vrule height 10pt}}
+

@@ -1,0 +1,216 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Anpassungen für exam %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{anyfontsize}
+%\usepackage{color, colortbl}							% leider zerlegt es da meine tabularx-Umgebung...
+\usepackage{xcolor}										% Colour control for LATEX documents
+%\shadedsolutions
+\renewcommand{\solutiontitle}{\noindent}
+\SolutionEmphasis{\color{blue}}
+\colorgrids
+\definecolor{GridColor}{gray}{0.7}
+\setlength{\gridsize}{5.03mm}
+\setlength{\gridlinewidth}{0.3mm}
+\setlength\dottedlinefillheight{5mm}
+\colorfillwithdottedlines
+\definecolor{FillWithDottedLinesColor}{gray}{0.5}
+
+\renewcommand{\questionlabel}{\textcolor{white}{\arabic{question}.0}}
+\renewcommand{\partlabel}{\thequestion.\arabic{partno}}
+\renewcommand{\subpartlabel}{\arabic{question}.\arabic{partno}.\arabic{subpart}}
+
+\newcommand{\questionnull}{\renewcommand{\questionlabel}{\arabic{question}.0} \question}
+\newcommand{\questionsolo}{\renewcommand{\questionlabel}{\arabic{question}\textcolor{white}{.0}} \question}
+\newcommand{\questioneins}{\renewcommand{\questionlabel}{\textcolor{white}{\arabic{question}.0}} \question}
+
+\renewcommand{\questionshook}{%
+	\setlength{\labelsep}{4mm}%{20.5pt}
+	\setlength{\leftmargin}{26pt}
+}
+
+%\renewcommand{\questionshook}{% 
+%	\setlength{\leftmargin}{0pt}% 
+%	\setlength{\labelwidth}{-\labelsep}%
+%}
+
+\renewcommand{\partshook}{%
+	\setlength{\labelsep}{4mm}
+	\setlength{\leftmargin}{0pt}
+}
+
+\renewcommand{\subpartshook}{%
+	\setlength{\labelsep}{4mm}
+	\setlength{\leftmargin}{0pt}
+}
+
+
+
+%\renewcommand{\choiceshook}{%
+%	\setlength{\labelsep}{20.5pt}%Kopf
+%	\usepackage{scrlayer-scrpage}
+%	%\pagestyle{scrheadings}
+%	\clearpairofpagestyles
+%	\DeclareNewLayer[
+%	foreground, oddpage,
+%	align=br, hoffset=\paperwidth-10mm , voffset=20mm,%\paperheight,
+%	width=10mm, height=20mm,
+%	contents=
+%	{{%
+%			\setlength{\fboxsep}{0pt}%
+%			\begin{tcolorbox}[
+%				sharp corners, 
+%				rounded corners=southeast, rounded corners=southwest,
+%				colback=white, colframe=black,
+%				arc=3mm,
+%				height=20mm, width=5mm,
+%				text width=5mm,
+%				valign=bottom,
+%				boxsep=2mm,left=0pt,right=0pt,top=0pt,bottom=0pt
+%				]
+%				\color{white}\centering{\pagemark}
+%			\end{tcolorbox}
+%	}}
+%	]{pagenumberouterabove.odd}
+%	\DeclareNewLayer[
+%	clone=pagenumberouterabove.odd,
+%	evenpage,
+%	align=bl,
+%	hoffset=15mm,
+%	]{pagenumberouterabove.even}
+%	
+%	\addtokomafont{pagenumber}{\color{black}\bfseries}
+%	\AddLayersToPageStyle{scrheadings}{pagenumberouterabove.odd,pagenumberouterabove.even}
+%	\AddLayersToPageStyle{plain}{pagenumberouterabove.odd,pagenumberouterabove.even}
+%	\setlength{\leftmargin}{26pt}
+%}
+
+
+\newcommand{\ansredcheck}{\ifprintanswers\ensuremath{\textcolor{red}{\checkmark}}\else\fi}
+\newcommand{\redcheck}{\ensuremath{\textcolor{red}{\checkmark}}}
+
+\pointsinrightmargin
+
+\pointformat{\fontsize{10}{12}\selectfont (\quad\,\,\,$\mid$\,\,\,\textsf{\themarginpoints}\,\,\,)}
+
+%%%%% \newcounter %%%%%
+\newcounter{nullpunkte}
+\newcounter{punkte}[nullpunkte]
+\newcounter{aufg}\setcounter{aufg}{0}
+%%%%% \newcounter %%%%%
+
+%%%%% newfont %%%%%
+\newfont{\calligraphic}{callig15 scaled 1200}
+%%%%% newfont %%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Anpassungen für exam %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newcommand{\ansnp}{%
+	\ifprintanswers
+	\newpage
+	\else
+	\fi%
+	}
+
+\newcommand{\noansnp}{%
+	\ifprintanswers
+	\else 
+	\newpage
+	\fi%
+}
+
+\newcommand{\rueckseite}{
+\ifprintanswers	
+\else
+%	\vfill
+	
+	\begin{flushright}
+		Auf der Rückseite geht es weiter!
+	\end{flushright}
+	
+	\newpage
+	\thispagestyle{empty} \vspace*{-2em}
+\fi
+}
+
+\newcommand{\rueckseitesofort}{
+%	\vfill
+\ifprintanswers	
+\else
+	\begin{flushright}
+		Auf der Rückseite geht es weiter!
+	\end{flushright}
+	
+	\newpage
+	\thispagestyle{empty} \vspace*{-2em}
+\fi
+}
+
+\newcommand{\rueckseitenurangabe}{
+	%	\vfill
+	\ifprintanswers
+	\else
+		\begin{flushright}
+			Auf der Rückseite geht es weiter!
+		\end{flushright}
+		
+		\newpage
+		\thispagestyle{empty} \vspace*{-2em}
+	\fi	
+}
+
+\newcommand{\naechsteseite}{
+	%\vfill
+	
+	\begin{flushright}
+		Auf der nächsten Seite geht es weiter!
+	\end{flushright}
+	
+	\newpage
+	\thispagestyle{empty} \vspace*{-2em}}
+
+\newcommand{\naechsteseitenurangabe}{
+	%	\vfill
+	\ifprintanswers
+	\else
+	\begin{flushright}
+		Auf der nächsten Seite geht es weiter!
+	\end{flushright}
+	
+	\newpage
+	\thispagestyle{empty} \vspace*{-2em}
+	\fi	
+}
+
+\newcommand{\naechstesblatt}{
+	%\vfill
+	
+	\begin{flushright}
+		Auf dem nächsten Blatt geht es weiter!
+	\end{flushright}
+	
+	\newpage
+	\thispagestyle{empty} \vspace*{-2em}}
+
+\newcommand{\umblaetternnurangabe}{
+	%\vfill
+	\ifprintanswers
+	\else
+		\begin{flushright}
+			Bitte einmal umblättern!
+		\end{flushright}
+		
+		\newpage
+		\thispagestyle{empty} \vspace*{-2em}
+	\fi	
+}
+
+
+\newcommand{\ipa}[1]{\ifprintanswers \textcolor{blue}{\;#1} \else \fi}
+
+\newcommand{\spa}{\ifprintanswers \else \\[-2ex] \fi} % Platz vor solutionorgrid
+
+\newcommand{\radier}[1]{\ifprintanswers \textcolor{blue}{#1\!\!} \else \phantom{#1} \fi}

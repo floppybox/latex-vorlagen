@@ -1,0 +1,19 @@
+%%%%% \setlength %%%%%
+\setlength{\parindent}{0em}       % kein Erstzeileneinzug
+\setlength{\textheight}{282mm} 
+\setlength{\textwidth}{167mm}
+\setlength{\oddsidemargin}{-15mm} 
+\setlength{\evensidemargin}{-15mm} 
+\setlength{\topmargin}{-28mm}
+\setlength{\marginparsep}{8mm}
+\setlength{\rightpointsmargin}{3mm}
+%%%%% \setlength %%%%%
+
+\usepackage{marginnote}
+
+
+%Die Gesamtpunkte immer im rechten Rand! Quelle: https://tex.stackexchange.com/questions/69595/marginnote-always-on-right-side-of-the-page
+\makeatletter
+\patchcmd{\@addmarginpar}{\ifodd\c@page}{\ifodd\c@page\@tempcnta\m@ne}{}{}
+\makeatother
+\reversemarginpar

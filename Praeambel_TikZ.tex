@@ -1,0 +1,1182 @@
+
+%\usepackage[upright]{fourier}				% Für aufrechte Labels der Punkte in tkz-euclide - Quelle: https://tikz.fr/tkz-euclide-simple-example/
+
+\newcommand{\pfeilrunterbeschriftungrechts}[1]{\begin{tikzpicture} \draw[-Stealth, ultra thick] (0,0.5) -- node [right, xshift=2em] {#1} (0,-0.5); \end{tikzpicture}}
+
+\usepackage{nicematrix} % Für schöne Tabellen mit dem Befehl \begin{NiceTabular}{|c|c|c|}[cell-space-limits=4pt] ... \end{NiceTabular}
+
+\usepackage{tkz-euclide}
+
+\usepackage[compat=1.1.0]{tikz-feynman}
+
+\usepackage{tikz}							% Create PostScript and PDF graphics in TEX
+	\usetikzlibrary{3d, angles, arrows, arrows.meta, babel, backgrounds, bending, calc, circuits.logic.US, decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decorations.text, decorations, er, fit, graphs, intersections, matrix, mindmap, patterns, plotmarks, positioning, quotes, svg.path, shadows.blur, shapes.misc, tikzmark, trees, shapes, shadows, through, circuits.logic.US, circuits.logic.IEC, circuits.logic.CDH, circuits.ee.IEC}
+
+\usepackage{tikz-qtree}
+
+%%\usepackage[upright]{fourier} 
+%\usepackage{fourier} 
+
+\usetikzlibrary{positioning}
+
+\usepackage[american, europeanresistors,americanvoltages,emptydiodes,siunitx]{circuitikz}
+	\tikzset{circuit declare symbol = ammeter}
+	\tikzset{set ammeter graphic ={draw,generic circle IEC, minimum size=5.5mm,info=center:A}}
+	\tikzset{circuit declare symbol = voltmeter}
+	\tikzset{set voltmeter graphic ={draw,generic circle IEC, minimum size=5.5mm,info=center:V}}
+
+\usepackage{pgf}
+\usepgflibrary{decorations.text}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+
+%  Für Schraffur (https://tex.stackexchange.com/questions/164773/graphics-area-between-curves)
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+
+	
+\makeatletter
+\tikzset{%
+	remember picture with id/.style={%
+		remember picture,
+		overlay,
+		save picture id=#1,
+	},
+	save picture id/.code={%
+		\edef\pgf@temp{#1}%
+		\immediate\write\pgfutil@auxout{%
+			\noexpand\savepointas{\pgf@temp}{\pgfpictureid}}%
+	},
+	if picture id/.code args={#1#2#3}{%
+		\@ifundefined{save@pt@#1}{%
+			\pgfkeysalso{#3}%
+		}{
+			\pgfkeysalso{#2}%
+		}
+	}
+}
+
+\def\savepointas#1#2{%
+	\expandafter\gdef\csname save@pt@#1\endcsname{#2}%
+}
+
+\def\tmk@labeldef#1,#2\@nil{%
+	\def\tmk@label{#1}%
+	\def\tmk@def{#2}%
+}
+
+\tikzdeclarecoordinatesystem{pic}{%
+	\pgfutil@in@,{#1}%
+	\ifpgfutil@in@%
+	\tmk@labeldef#1\@nil
+	\else
+	\tmk@labeldef#1,(0pt,0pt)\@nil
+	\fi
+	\@ifundefined{save@pt@\tmk@label}{%
+		\tikz@scan@one@point\pgfutil@firstofone\tmk@def
+	}{%
+		\pgfsys@getposition{\csname save@pt@\tmk@label\endcsname}\save@orig@pic%
+		\pgfsys@getposition{\pgfpictureid}\save@this@pic%
+		\pgf@process{\pgfpointorigin\save@this@pic}%
+		\pgf@xa=\pgf@x
+		\pgf@ya=\pgf@y
+		\pgf@process{\pgfpointorigin\save@orig@pic}%
+		\advance\pgf@x by -\pgf@xa
+		\advance\pgf@y by -\pgf@ya
+	}%
+}
+\makeatother
+
+\newcommand{\tikzmarkindouble}[2][]{%
+	\tikz[remember picture,overlay,baseline=1ex]
+	\draw[line width=0.5pt,#1,double]
+	(pic cs:#2) -- (0,0)
+	;}
+
+\newcommand{\tikzmarkin}[2][]{%
+	\tikz[remember picture,overlay,baseline=1ex]
+	\draw[line width=0.5pt,#1]
+	(pic cs:#2) -- (0,0)
+	;}
+
+\newcommand\tikzmarkend[2][]{%
+	\tikz[remember picture with id=#2,baseline=1ex] 
+	#1;}
+
+\newcommand{\tikzmarkindoublebaseline}[3][]{%
+	\tikz[remember picture,overlay,baseline=#3ex]
+	\draw[line width=0.5pt,#1,double]
+	(pic cs:#2) -- (0,0)
+	;}
+
+\newcommand{\tikzmarkinbaseline}[3][]{%
+	\tikz[remember picture,overlay,baseline=#3ex]
+	\draw[line width=0.5pt,#1]
+	(pic cs:#2) -- (0,0)
+	;}
+
+\newcommand\tikzmarkendbaseline[3][]{%
+	\tikz[remember picture with id=#2,baseline=#3ex] 
+	#1;}
+
+
+\newcommand{\UpArrow}{\mathord{~\begin{tikzpicture}[baseline=0ex, line width=0.7, scale=0.12, ->, >=latex]
+		\draw (0,0) -- (0,3);
+		\end{tikzpicture}}}
+
+\newcommand{\DownArrow}{\mathord{~\begin{tikzpicture}[baseline=0ex, line width=0.7, scale=0.12, <-, >=latex]
+		\draw (0,0) -- (0,3);
+		\end{tikzpicture}}}
+	
+\newcommand{\RightDownArrow}{\mathord{~\begin{tikzpicture}[baseline=0ex, line width=0.7, scale=0.12, ->, >=latex]
+		\draw (0,3) -- (3,0);
+		\draw (1,4) -- (4,1);
+		\end{tikzpicture}}}
+
+\newcommand{\RightUpArrow}{\mathord{~\begin{tikzpicture}[baseline=0ex, line width=0.7, scale=0.12, <-, >=latex]
+		\draw (0,0) -- (0,3);
+		\end{tikzpicture}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LowUpDep %%%%%%%%%%%%%%%%%%%%
+%\tikzset{dependent/.style={annotation arrow/.style = {>=}}}
+%%
+%%
+%%LowDep %%%%%
+%\tikzset{LowDep/.style args={#1}{
+%		append after command={%
+%			\bgroup
+%			[current point is local=true]
+%			[every LowDep/.try]
+%			[annotation arrow,-]
+%			(-2.5\tikzcircuitssizeunit,-1.5\tikzcircuitssizeunit) edge[line to]
+%			(-1.5\tikzcircuitssizeunit,-1.5\tikzcircuitssizeunit) node[xshift=3.0\tikzcircuitssizeunit]{#1}
+%			\egroup%
+%	}},
+%	%
+%	LowDep'/.style args={#1}{
+%		append after command={%
+%			\bgroup
+%			[current point is local=true, yscale=-1]
+%			[every LowDep/.try]
+%			[annotation arrow,-]
+%			(-2.5\tikzcircuitssizeunit,-1.5\tikzcircuitssizeunit) edge[line to]
+%			(-1.5\tikzcircuitssizeunit,-1.5\tikzcircuitssizeunit) node[xshift=3.0\tikzcircuitssizeunit]{#1}
+%			\egroup%
+%	}}
+%}
+%%
+%%
+%%
+%%UpDep %%%%%
+%\tikzset{UpDep/.style args={#1}{
+%		append after command={%
+%			\bgroup
+%			[current point is local=true]
+%			[every UpDep/.try]
+%			[annotation arrow,-]
+%			%
+%			(2.5\tikzcircuitssizeunit,1.5\tikzcircuitssizeunit)  edge[line to]
+%			(1.5\tikzcircuitssizeunit,1.5\tikzcircuitssizeunit) node[xshift=-3.0\tikzcircuitssizeunit]{#1}
+%			\egroup%
+%	}},
+%	%
+%	UpDep'/.style args={#1}{
+%		append after command={%
+%			\bgroup
+%			[current point is local=true, yscale=-1]
+%			[every UpDep/.try]
+%			[annotation arrow,-]
+%			%
+%			(2.5\tikzcircuitssizeunit,1.5\tikzcircuitssizeunit)  edge[line to]
+%			(1.5\tikzcircuitssizeunit,1.5\tikzcircuitssizeunit) node[xshift=-3.0\tikzcircuitssizeunit]{#1}
+%			\egroup%
+%	}}
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\newcommand\circlearound[1]{\tikz[baseline]\node[draw,shape=circle,anchor=base] {#1} ;}
+
+%\usepackage{relsize} % für {\larger\textcircled{\smaller[2]1}}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{ \node[shape=circle,draw,inner sep=2pt, minimum width=3ex, line width=0.75pt] (char) {\textsf{#1}};}}
+
+
+%my-Meter - eigenes Messgerät zum Eintragen:
+\tikzset{circuit declare symbol = mymeter}
+\tikzset{set mymeter graphic ={draw,generic circle IEC, minimum size=7mm,info=center:}}
+
+
+%\tikzset{circuit declare symbol = AC source}
+%\tikzset{AC source IEC graphic/.style={
+%		circuit symbol lines,
+%		circuit symbol size=width 2 height 2,
+%		shape=generic circle IEC,
+%		/pgf/generic circle IEC/before background={
+%			\pgfpathmoveto{\pgfpoint{-0.8pt}{0pt}}
+%			\pgfpathsine{\pgfpoint{0.4pt}{0.4pt}}
+%			\pgfpathcosine{\pgfpoint{0.4pt}{-0.4pt}}
+%			\pgfpathsine{\pgfpoint{0.4pt}{-0.4pt}}
+%			\pgfpathcosine{\pgfpoint{0.4pt}{0.4pt}}
+%			\pgfusepath{stroke}
+%		},
+%		transform shape, draw
+%	}
+%}
+%\tikzset{circuit ee IEC/.append style=
+%	{set AC source graphic = AC source IEC graphic}
+%}
+%
+%\tikzset{circuit declare symbol = AC generator}
+%\tikzset{set AC generator graphic ={draw, minimum size=5.5mm,transform shape, info=center:{$\underset{\mathbf{\sim}}{\mathsf{G}}$}}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%% geschweifte Klammern in Tabellen - Aternative		
+
+\usepackage{array, multirow, bigdelim, makecell, booktabs}
+%& \hspace{-10em}\rdelim\}{3.5}{*}[\quad $\Rightarrow W_\text{th}  = \SI{4,182}{\kilo\joule}$] 
+
+%%%%% geschweifte Klammern in Tabellen - Aternative		
+
+% Zum extrahieren von Punktkoordinaten und Weiterverwendung
+\newdimen\XCoord
+\newdimen\YCoord
+\newcommand*{\ExtractCoordinate}[1]{\path (#1); \pgfgetlastxy{\XCoord}{\YCoord};}
+
+
+% für eine schöne Spule (wird aber aktuell nicht genutzt)
+% \draw (0,-1) -- node[inductor={0}]{} ++(2,0) node[right]{\verb|inductor={0}|};
+% Quelle: https://tex.stackexchange.com/questions/212077/circuitikz-inductor-style
+
+\tikzset{
+	inductor/.style args={#1}{
+		sloped,
+		allow upside down,
+		minimum height=4mm,
+		minimum width=10mm,
+		path picture={%
+			\pgfmathsetmacro{\addangle}{#1}
+			\pgfmathsetmacro{\radius}{.8/(2+6*cos(\addangle))}
+			\draw[white] (-4.5mm,0) -- (4.5mm,0);
+			\draw[line join=bevel] (-5mm,0)-- (-4mm,0)
+			arc (180:-\addangle:\radius)
+			arc (180+\addangle:-\addangle:\radius)
+			arc (180+\addangle:-\addangle:\radius)
+			arc (180+\addangle:0:\radius)
+			-- (5mm,0);
+		}
+	},
+	inductor/.default={40}
+}
+
+\tikzstyle{background grid}=[draw, black!20,step=1*5mm]
+
+%TikZ Grid Paper With Node Coordinates
+
+\makeatletter% from https://tex.stackexchange.com/a/39698/121799
+\def\grd@save@target#1{%
+	\def\grd@target{#1}}
+\def\grd@save@start#1{%
+	\def\grd@start{#1}}
+\tikzset{
+	labeled grid/.style={
+		to path={%
+			\pgfextra{%
+				\edef\grd@@target{(\tikztotarget)}%
+				\tikz@scan@one@point\grd@save@target\grd@@target\relax
+				\edef\grd@@start{(\tikztostart)}%
+				\tikz@scan@one@point\grd@save@start\grd@@start\relax
+				\draw[minor help lines] (\tikztostart) grid (\tikztotarget);
+				\draw[major help lines] (\tikztostart) grid (\tikztotarget);
+				\grd@start
+				\pgfmathsetmacro{\grd@xa}{\the\pgf@x/1cm}
+				\pgfmathsetmacro{\grd@ya}{\the\pgf@y/1cm}
+				\grd@target
+				\pgfmathsetmacro{\grd@xb}{\the\pgf@x/1cm}
+				\pgfmathsetmacro{\grd@yb}{\the\pgf@y/1cm}
+				\pgfmathsetmacro{\grd@xc}{\grd@xa + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+				\pgfmathsetmacro{\grd@yc}{\grd@ya + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+				%\foreach \x in {\grd@xa,\grd@xc,...,\grd@xb}
+				%\node[anchor=north] at (\x,\grd@ya) {\pgfmathprintnumber{\x}};
+				%\foreach \y in {\grd@ya,\grd@yc,...,\grd@yb}
+				%\node[anchor=east] at (\grd@xa,\y) {\pgfmathprintnumber{\y}};
+				\path foreach \x in {\grd@xa,\grd@xc,...,\grd@xb}
+				{foreach \y in {\grd@ya,\grd@yc,...,\grd@yb}
+					{ (\x,\y) node[grid with coordinates/grid label] {$(\pgfmathprintnumber{\x},\pgfmathprintnumber{\y})$}}};
+			}
+		}
+	},
+	minor help lines/.style={
+		help lines,
+		step=\pgfkeysvalueof{/tikz/grid with coordinates/minor step},
+		draw=none
+	},
+	major help lines/.style={
+		help lines,
+		line width=\pgfkeysvalueof{/tikz/grid with coordinates/major line width},
+		step=\pgfkeysvalueof{/tikz/grid with coordinates/major step},
+		draw=none
+	},
+	grid with coordinates/.cd,
+	minor step/.initial=.2,
+	major step/.initial=1,
+	major line width/.initial=0pt,
+	grid label/.style={below,scale=0.3,color = black!20}
+}
+\makeatother
+
+\newcommand{\lamp}{\!
+\begin{tikzpicture}[scale=0.5, every node/.style={transform shape}]
+\draw (0,0) to [lamp] (2,0);
+\end{tikzpicture}\; }
+
+\tikzstyle{background grid}=[draw, black!20,step=1*5mm]
+
+\makeatletter
+\pgfdeclareshape{neon lamp shape}
+{
+	\inheritsavedanchors[from=circle ee]
+	\inheritanchor[from=circle ee]{center}
+	\inheritanchor[from=circle ee]{north}
+	\inheritanchor[from=circle ee]{south}
+	\inheritanchor[from=circle ee]{east}
+	\inheritanchor[from=circle ee]{west}
+	\inheritanchor[from=circle ee]{north east}
+	\inheritanchor[from=circle ee]{north west}
+	\inheritanchor[from=circle ee]{south east}
+	\inheritanchor[from=circle ee]{south west}
+	\inheritanchor[from=circle ee]{input}
+	\inheritanchor[from=circle ee]{output}
+	\inheritanchorborder[from=circle ee]
+	
+	\backgroundpath{
+		\pgf@process{\radius}
+		\pgfutil@tempdima=\radius
+		
+		\pgfpathcircle{\centerpoint}{\pgfutil@tempdima}
+		
+		\pgfpathmoveto{\pgfpoint{-\pgfutil@tempdima}{0pt}}
+		\pgfpathlineto{\pgfpoint{-0.4\pgfutil@tempdima}{0pt}}
+		\pgfpathmoveto{\pgfpoint{-0.4\pgfutil@tempdima}{0.6\pgfutil@tempdima}}
+		\pgfpathlineto{\pgfpoint{-0.4\pgfutil@tempdima}{-0.6\pgfutil@tempdima}}
+		
+		\pgfpathmoveto{\pgfpoint{\pgfutil@tempdima}{0pt}}
+		\pgfpathlineto{\pgfpoint{0.4\pgfutil@tempdima}{0pt}}
+		\pgfpathmoveto{\pgfpoint{0.4\pgfutil@tempdima}{0.6\pgfutil@tempdima}}
+		\pgfpathlineto{\pgfpoint{0.4\pgfutil@tempdima}{-0.6\pgfutil@tempdima}}
+		\pgfusepath{stroke}
+		
+		\pgfpathcircle{\pgfqpoint{0\pgfutil@tempdima}{0.55\pgfutil@tempdima}}{.1\pgfutil@tempdima}
+		\pgfusepath{stroke}
+	}
+}
+\makeatother
+
+\newcommand{\mathdirectcurrent}{\mathrel{\mathpalette\mathdirectcurrentinner\relax}}
+\newcommand{\mathdirectcurrentinner}[2]{%
+	\settowidth{\dimen0}{$#1=$}%
+	\vbox to .85ex {\offinterlineskip
+		\hbox to \dimen0{\hss\leaders\hrule height 1pt\hskip.85\dimen0\hss}
+		\vskip.35ex
+		\hbox to \dimen0{\hss
+			\leaders\hrule height 1pt\hskip.34\dimen0
+			\hskip.17\dimen0
+			\leaders\hrule height 1pt\hskip.34\dimen0
+			%			\hskip.17\dimen0
+			%			\leaders\hrule\hskip.17\dimen0
+			\hss}
+		%		\vfill
+	}%
+}
+\newcommand{\textdirectcurrent}{\mathdirectcurrentinner{\textstyle}{}}
+
+\newcommand\Ground{%
+	\mathbin{\text{\begin{tikzpicture}[circuit ee IEC,yscale=0.6,xscale=0.5]
+			\draw (0,2ex) to (0,0) node[ground,rotate=-90,xshift=.65ex] {};
+			\end{tikzpicture}}}%
+}
+
+
+% schöne Pfeilspitzen
+\tikzset{%
+	>=latex,
+	inner sep=0pt,%
+	outer sep=0pt,%         Das ist auch der Abstand zwischen Messgeräten und Leitungen!!!
+	mark coordinate/.style={inner sep=0pt,outer sep=0pt,minimum size=3pt,
+		fill=black,circle}%
+}
+
+
+\newcommand\pgfmathsinandcos[3]{%
+	\pgfmathsetmacro#1{sin(#3)}%
+	\pgfmathsetmacro#2{cos(#3)}%
+}
+\newcommand\LongitudePlane[3][current plane]{%
+	\pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+	\pgfmathsinandcos\sint\cost{#3} % azimuth
+	\tikzset{#1/.style={cm={\cost,\sint*\sinEl,0,\cosEl,(0,0)}}}
+}
+
+\newcommand\LatitudePlane[3][current plane]{%
+	\pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+	\pgfmathsinandcos\sint\cost{#3} % latitude
+	\pgfmathsetmacro\yshift{\RadiusSphere*\cosEl*\sint}
+	\tikzset{#1/.style={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
+}
+\newcommand\NewLatitudePlane[4][current plane]{%
+	\pgfmathsinandcos\sinEl\cosEl{#3} % elevation
+	\pgfmathsinandcos\sint\cost{#4} % latitude
+	\pgfmathsetmacro\yshift{#2*\cosEl*\sint}
+	\tikzset{#1/.style={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
+}
+\newcommand\DrawLongitudeCircle[2][1]{
+	\LongitudePlane{\angEl}{#2}
+	\tikzset{current plane/.prefix style={scale=#1}}
+	% angle of "visibility"
+	\pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+	\draw[current plane] (\angVis:1) arc (\angVis:\angVis+180:1);
+	\draw[current plane,opacity=0.4] (\angVis-180:1) arc (\angVis-180:\angVis:1);
+}
+\newcommand\DrawLongitudeArc[4][black]{
+	\LongitudePlane{\angEl}{#2}
+	\tikzset{current plane/.prefix style={scale=1}}
+	\pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+	\pgfmathsetmacro\angA{mod(max(\angVis,#3),360)} %
+	\pgfmathsetmacro\angB{mod(min(\angVis+180,#4),360} %
+	\draw[current plane,#1,opacity=0.4] (#3:\RadiusSphere) arc (#3:#4:\RadiusSphere);
+	\draw[current plane,#1]  (\angA:\RadiusSphere) arc (\angA:\angB:\RadiusSphere);
+}%
+\newcommand\DrawLatitudeCircle[2][1]{
+	\LatitudePlane{\angEl}{#2}
+	\tikzset{current plane/.prefix style={scale=#1}}
+	\pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+	% angle of "visibility"
+	\pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+	\draw[current plane] (\angVis:1) arc (\angVis:-\angVis-180:1);
+	\draw[current plane,opacity=0.4] (180-\angVis:1) arc (180-\angVis:\angVis:1);
+}
+
+\newcommand\DrawLatitudeArc[4][black]{
+	\LatitudePlane{\angEl}{#2}
+	\tikzset{current plane/.prefix style={scale=1}}
+	\pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+	% angle of "visibility"
+	\pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+	\pgfmathsetmacro\angA{max(min(\angVis,#3),-\angVis-180)} %
+	\pgfmathsetmacro\angB{min(\angVis,#4)} %
+	\draw[current plane,#1,opacity=0.4] (#3:\RadiusSphere) arc (#3:#4:\RadiusSphere);
+	\draw[current plane,#1] (\angA:\RadiusSphere) arc (\angA:\angB:\RadiusSphere);
+}
+
+
+% Fading:
+\makeatletter
+\tikzset{ % based on https://tex.stackexchange.com/q/328433/121799
+	/tikz/render blur shadow/.code={
+		\pgfbs@savebb
+		\pgfsyssoftpath@getcurrentpath{\pgfbs@input@path}%
+		\pgfbs@compute@shadow@bbox
+		\pgfbs@process@rounding{\pgfbs@input@path}{\pgfbs@fadepath}%
+		\pgfbs@apply@canvas@transform
+		\colorlet{pstb@shadow@color}{white!\pgfbs@opacity!\my@shadow@color}%
+		\pgfdeclarefading{shadowfading}{\pgfbs@paint@fading}%
+		\pgfsetfillcolor{\my@shadow@color}%
+		\pgfsetfading{shadowfading}%
+		{\pgftransformshift{\pgfpoint{\pgfbs@midx}{\pgfbs@midy}}}%
+		\pgfbs@usebbox{fill}%
+		\pgfbs@restorebb
+	},}
+\tikzset{
+	/tikz/shadow color/.store in=\my@shadow@color,
+	/tikz/shadow color=gray,
+}
+\makeatother
+
+% Text entlang Winkel-Markierung nach 
+%	https://tex.stackexchange.com/questions/234826/build-text-path-using-pic-from-library-angles
+
+\newcommand{\escala}{.02} % escala
+\tikzset{MeuAngulo/.style={draw=blue,<-,angle eccentricity=1.2,angle radius=25pt,semithick}}
+
+\makeatletter
+\tikzset{
+	pics/deco angle/.style n args = 2{
+		setup code  = \tikz@lib@angle@parse#1\pgf@stop,
+		background code = \tikz@lib@angle@background#1\pgf@stop,
+		foreground code = \tikz@lib@decoangle@foreground#1{#2}\pgf@stop,
+	},
+	pics/angle/.default=A--B--C,
+	angle eccentricity/.initial=.6,
+	angle radius/.initial=5mm
+}
+
+\def\tikz@lib@decoangle@foreground#1--#2--#3#4\pgf@stop{%
+	\path [name prefix ..] [pic actions, fill=none, shade=none]
+	([shift={(\tikz@start@angle@temp:\tikz@lib@angle@rad pt)}]#2.center)
+	arc [start angle=\tikz@start@angle@temp, end
+	angle=\tikz@end@angle@temp, radius=\tikz@lib@angle@rad pt];
+	\path [name prefix ..] [fill=none, shade=none, decorate, decoration={text along path, text align=center, text={#4}}]
+	([shift={(\tikz@end@angle@temp:\tikz@lib@angle@rad+2 pt)}]#2.center)
+	arc [start angle=\tikz@end@angle@temp, end angle=\tikz@start@angle@temp, radius=\tikz@lib@angle@rad+2 pt];
+}
+\makeatother
+% und jetzt noch für Text auf dem Kopf...
+\makeatletter
+\tikzset{
+	pics/deco angle usd/.style n args = 2{
+		setup code  = \tikz@lib@angle@parse#1\pgf@stop,
+		background code = \tikz@lib@angle@background#1\pgf@stop,
+		foreground code = \tikz@lib@decoangle@foreground#1{#2}\pgf@stop,
+	},
+	pics/angle/.default=A--B--C,
+	angle eccentricity/.initial=.6,
+	angle radius/.initial=5mm
+}
+
+\def\tikz@lib@decoangle@foreground#1--#2--#3#4\pgf@stop{%
+	\path [name prefix ..] [pic actions, fill=none, shade=none] ([shift={(\tikz@start@angle@temp:\tikz@lib@angle@rad pt)}]#2.center)
+	arc [start angle=\tikz@start@angle@temp, end angle=\tikz@end@angle@temp, radius=\tikz@lib@angle@rad pt];
+	\path [name prefix ..] [fill=none, shade=none, decorate, decoration={text along path, text align=center, text={$|\scriptstyle|~#4~||$}}]
+	([shift={(\tikz@end@angle@temp:\tikz@lib@angle@rad+3 pt)}]#2.center)
+	arc [start angle=\tikz@end@angle@temp, end angle=\tikz@start@angle@temp, radius=\tikz@lib@angle@rad+2 pt];
+}
+\makeatother
+
+%%%%%%%%%%%%%%% Highlighter
+%%%%%%%%%%%%%%% Quelle. https://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex
+
+\usepackage{soulutf8}
+\usepackage{atbegshi}
+\usepackage{etoolbox}
+
+\usetikzlibrary{tikzmark,calc,decorations.pathmorphing}
+
+\colorlet{tdcolor}{yellow!35}
+
+\makeatletter
+
+\newlength{\txtdec@depth}
+\setlength{\txtdec@depth}{.5ex}
+\newlength{\txtdec@height}
+\setlength{\txtdec@height}{\f@size pt} % sensible default
+
+\newcounter{txtdec@hyphmark}
+\newcounter{txtdec@decormark}
+\setcounter{txtdec@decormark}{1}
+\newcounter{txtdec@hyphdraw}
+\setcounter{txtdec@hyphdraw}{1}
+\newcounter{txtdec@decordraw}
+\setcounter{txtdec@decordraw}{1}
+
+\newcounter{txtdec@thenextpage}
+
+\newtoggle{txtdec@unfinisheddecor}
+\newtoggle{txtdec@stayonpage}
+\newtoggle{txtdec@stayondecor}
+\newtoggle{txtdec@stayonline}
+
+% from https://tex.stackexchange.com/a/33765/105447
+\newcommand{\gettikzxy}[3]{%
+	\tikz@scan@one@point\pgfutil@firstofone#1\relax
+	\edef#2{\the\pgf@x}%
+	\edef#3{\the\pgf@y}%
+}
+
+% the drawing macros
+
+\tikzset{%
+	defaultdecor/.style={%
+		fill=tdcolor,
+		decoration = {random steps, amplitude=0.5pt, segment length=15pt},
+		outer sep = -15pt,
+		inner sep = 0pt,
+		decorate}%
+}
+
+\newcommand{\txtdec@draw@all}{%
+	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
+	\path[defaultdecor, thisdecor]
+	($(\Xbegin,\Ybegin)+(0,-\txtdec@depth)$) rectangle
+	($(\Xend,\Yend)+(0,\txtdec@height-\txtdec@depth)$) ;
+}
+
+\newcommand{\txtdec@draw@begin}{%
+	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
+	\path[defaultdecor, thisdecor]
+	($(\Xbegin,\Ybegin)+(0,-\txtdec@depth)$) rectangle
+	($(\Xlineend,\Ylineend)+(0,\txtdec@height-\txtdec@depth)$) ;
+}
+
+\newcommand{\txtdec@draw@middle}{%
+	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
+	\path[defaultdecor, thisdecor]
+	($(\Xlinebegin,\Ylinebegin)+(0,-\txtdec@depth)$) rectangle
+	($(\Xlineend,\Ylineend)+(0,\txtdec@height-\txtdec@depth)$) ;
+}
+
+\newcommand{\txtdec@draw@end}{%
+	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
+	\path[defaultdecor, thisdecor]
+	($(\Xlinebegin,\Ylinebegin)+(0,-\txtdec@depth)$) rectangle
+	($(\Xend,\Yend)+(0,\txtdec@height-\txtdec@depth)$) ;
+}
+
+
+% using soul to set tikzmarks
+
+\def\SOUL@tdleaders{%
+	\stepcounter{txtdec@hyphmark}%
+	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
+	\leaders\hrule\@depth\z@\@height\z@\relax
+}
+
+\def\SOUL@tdunderline#1{{%
+		\setbox\z@\hbox{#1}%
+		\dimen@=\wd\z@
+		\dimen@i=\SOUL@uloverlap
+		\advance\dimen@2\dimen@i
+		\rlap{%
+			\null
+			\kern-\dimen@i
+			\SOUL@ulcolor{\SOUL@tdleaders\hskip\dimen@}%
+			\hskip\dimen@
+		}%
+		\unhcopy\z@
+}}
+
+\def\SOUL@tdpreamble{%
+	\spaceskip\SOUL@spaceskip
+	\setcounter{txtdec@hyphmark}{0}%
+	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.begin}%
+}
+\def\SOUL@tdeverysyllable{%
+	\SOUL@tdunderline{%
+		\the\SOUL@syllable
+		\SOUL@setkern\SOUL@charkern
+	}%
+	\stepcounter{txtdec@hyphmark}%
+	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
+}
+\def\SOUL@tdeveryhyphen{%
+	\discretionary{%
+		\unkern
+		\SOUL@tdunderline{%
+			\SOUL@setkern\SOUL@hyphkern
+			\SOUL@sethyphenchar
+		}%
+		\stepcounter{txtdec@hyphmark}%
+		\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
+	}{}{}%
+}
+\def\SOUL@tdeveryexhyphen#1{%
+	\SOUL@setkern\SOUL@hyphkern
+	\SOUL@tdunderline{#1}%
+	\stepcounter{txtdec@hyphmark}%
+	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
+	\discretionary{}{}{%
+		\SOUL@setkern\SOUL@charkern
+	}%
+}
+\def\SOUL@tdpostamble{%
+	% create an extra mark, vertically displaced, to create an exit condition for the last line
+	\stepcounter{txtdec@hyphmark}%
+	\raisebox{-5pt}{\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}}%
+	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.end}%
+	\stepcounter{txtdec@decormark}%
+}
+\def\SOUL@tdsetup{%
+	\SOUL@setup
+	\let\SOUL@preamble\SOUL@tdpreamble
+	\let\SOUL@everysyllable\SOUL@tdeverysyllable
+	\let\SOUL@everyhyphen\SOUL@tdeveryhyphen
+	\let\SOUL@everyexhyphen\SOUL@tdeveryexhyphen
+	\let\SOUL@postamble\SOUL@tdpostamble
+}
+\DeclareRobustCommand*\textdecor[1][]{%
+	\csxdef{decor@tikz@style@\thetxtdec@decormark}{#1}%
+	\csxdef{decor@fsize@\thetxtdec@decormark}{\f@size pt}%
+	\SOUL@tdsetup\SOUL@}
+
+
+% get the drawing done AtBeginShipout
+
+\AtBeginShipout{%
+	\AtBeginShipoutUpperLeft{%
+		% getting the number of the next page
+		\setcounter{txtdec@thenextpage}{\thepage}%
+		\stepcounter{txtdec@thenextpage}%
+		% if the current decoration occurs on this page, stay on it
+		\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
+			\toggletrue{txtdec@stayonpage}}{}%
+		\whileboolexpr{togl {txtdec@stayonpage}}{%
+			\begin{tikzpicture}[remember picture, overlay]
+			\setlength{\txtdec@height}{\csuse{decor@fsize@\thetxtdec@decordraw}}%
+			\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.begin}{%
+				% if current decor begins in current page, get coordinates
+				\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.begin)}{\Xbegin}{\Ybegin}}{%
+				% if current decor begins in previous page, set to top left of the page
+				\gettikzxy{(current page.north west)}{\Xbegin}{\Ybegin}}%
+			\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.end}{%
+				% if current decor ends in current page, get coordinates
+				\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.end)}{\Xend}{\Yend}}{%
+				% if current decor ends in future page, set to bottom right of the page
+				\gettikzxy{(current page.south east)}{\Xend}{\Yend}}%
+			\ifdim\Ybegin=\Yend % the simplest case, a single line
+			\txtdec@draw@all
+			\stepcounter{txtdec@decordraw}%
+			\else % current textdecor has a line break          
+			\toggletrue{txtdec@stayondecor}%
+			\whileboolexpr{togl {txtdec@stayondecor}}{%
+				\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw})}{\Xlinebegin}{\Ylinebegin}%
+				\edef\Xcurrent{\Xlinebegin}%
+				\edef\Ycurrent{\Ylinebegin}%
+				\edef\Xnext{\Xcurrent}%
+				\edef\Ynext{\Ycurrent}%
+				\toggletrue{txtdec@stayonline}%
+				\whileboolexpr{togl {txtdec@stayonline}}{%
+					\ifdim\Ycurrent=\Ynext
+					\stepcounter{txtdec@hyphdraw}%
+					% if the following tikzmark exists, we are at a page break
+					\iftikzmark{p\arabic{txtdec@thenextpage}.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
+						\edef\Xcurrent{\Xnext}%
+						\edef\Ycurrent{\Ynext}%
+						\gettikzxy{(current page.south east)}{\Xnext}{\Ynext}
+						\togglefalse{txtdec@stayondecor}%
+					}{% else, we remain on the same page
+						\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
+							\edef\Xcurrent{\Xnext}%
+							\edef\Ycurrent{\Ynext}%
+							\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw})}{\Xnext}{\Ynext}}{}%
+					}%
+					\else
+					\edef\Xlineend{\Xcurrent}%
+					\edef\Ylineend{\Ycurrent}%
+					% if we are on the first line of the current decoration
+					\ifdim\Ylinebegin=\Ybegin
+					\txtdec@draw@begin
+					\else
+					% if we are on the last line of the current decoration
+					\ifdim\Ycurrent=\Yend
+					\txtdec@draw@end
+					\stepcounter{txtdec@decordraw}%
+					\setcounter{txtdec@hyphdraw}{1}%
+					\togglefalse{txtdec@stayondecor}%
+					% if we are in a middle line of the decoration
+					\else
+					\txtdec@draw@middle
+					\fi
+					\fi
+					\togglefalse{txtdec@stayonline}%  
+					\fi
+				}%
+			}%
+			\fi
+			\end{tikzpicture}%
+			% if the beginning of the next decor does not exist in this page, leave this page
+			\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.begin}{}{%
+				\togglefalse{txtdec@stayonpage}}%
+			% if the continuation of the current decor exists in the next page, leave this page
+			\iftikzmark{p\arabic{txtdec@thenextpage}.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
+				\togglefalse{txtdec@stayonpage}}{}% 
+		}%
+	}%
+}
+
+\makeatother
+
+%%%%% geschweifte Klammern von A nach B
+
+%\newcommand{\tikzmark}[2][-3pt]{\tikz[remember picture, overlay, baseline=-0.5ex]\node[#1](#2){};}
+%
+%\tikzset{brace/.style={decorate, decoration={brace}},
+%	brace mirrored/.style={decorate, decoration={brace,mirror}},
+%}
+%
+%\newcounter{brace}
+%\setcounter{brace}{0}
+%\newcommand{\drawbrace}[3][brace]{%
+%	\refstepcounter{brace}
+%	\tikz[remember picture, overlay]\draw[#1] (#2.center)--(#3.center)node[pos=0.5, name=brace-\thebrace]{};
+%}
+%
+%\newcounter{arrow}
+%\setcounter{arrow}{0}
+%\newcommand{\drawcurvedarrow}[3][]{%
+%	\refstepcounter{arrow}
+%	\tikz[remember picture, overlay]\draw (#2.center)edge[#1]node[coordinate,pos=0.5, name=arrow-\thearrow]{}(#3.center);
+%}
+%
+%% #1 options, #2 position, #3 text 
+%\newcommand{\annote}[3][]{%
+%	\tikz[remember picture, overlay]\node[#1] at (#2) {#3};
+%}
+
+\renewcommand{\tikzmark}[2][-3pt]{\tikz[remember picture, overlay, baseline=-0.5ex]\node[#1](#2){};}
+
+\tikzset{brace/.style={decorate, decoration={brace}},
+	brace mirrored/.style={decorate, decoration={brace,mirror}},
+}
+
+\newcounter{brace}
+\setcounter{brace}{0}
+\newcommand{\drawbrace}[3][brace]{%
+	\refstepcounter{brace}
+	\tikz[remember picture, overlay]\draw[#1] (#2.center)--(#3.center)node[pos=0.5, name=brace-\thebrace]{};
+}
+
+\newcounter{arrow}
+\setcounter{arrow}{0}
+\newcommand{\drawcurvedarrow}[3][]{%
+	\refstepcounter{arrow}
+	\tikz[remember picture, overlay]\draw (#2.center)edge[#1]node[coordinate,pos=0.5, name=arrow-\thearrow]{}(#3.center);
+}
+
+\newcommand{\annote}[3][]{%
+	\tikz[remember picture, overlay]\node[#1] at (#2) {#3};
+}
+
+
+%%%%% geschweifte Klammern von A nach B
+
+\newcommand*\mycirc[1]{%
+	\begin{tikzpicture}[baseline=(C.base)]
+	\node[draw,circle,inner sep=1pt](C) {#1};
+	\end{tikzpicture}}
+
+%%%%% Lüchentext \fib nach 
+%%%%% https://tobiw.de/tbdm/lueckentexte
+
+\makeatletter
+
+	\newlength\fib@width
+	
+	\newcommand\fib@widthfactor{1.34}
+	
+	\newlength\shortfib@width
+	
+	\newcommand\shortfib@widthfactor{1} % war 0.7
+	
+	\newif\iffibhideanswer
+	\fibhideanswertrue
+	
+	\tikzset{
+		every fill in box/.style={
+			inner xsep=5pt,
+			minimum height=4ex,
+			align=center, %% war "center"
+			font={\sffamily\slshape\bfseries},
+			color=magenta,
+			fill=black!5!white%dazu gedichtet
+		},
+		colored box/.style={
+			every fill in box,
+			fill=yellow!50!white,
+		},
+		framed box/.style={
+			every fill in box,
+			draw,
+		},
+		underline style/.style={},
+		underlined box/.style={
+			every fill in box,
+			append after command={%
+				\pgfextra{\begin{pgfinterruptpath}
+						\draw [underline style,dashed,color=gray] (\tikzlastnode.south west)
+						-- (\tikzlastnode.south east);
+				\end{pgfinterruptpath}}
+			},
+		},
+		bracket style/.style={},
+		underbracked box/.style={
+			every fill in box,
+			append after command={%
+				\pgfextra{\begin{pgfinterruptpath}
+						\draw [bracket style]
+						($(\tikzlastnode.south west)+(0,2pt)$)
+						|- (\tikzlastnode.south)
+						-| ($(\tikzlastnode.south east)+(0,2pt)$);
+				\end{pgfinterruptpath}}
+			},
+		},
+		%%%
+		bracket style/.style={},
+		simple box/.style={
+			every fill in box,
+			append after command={
+				\pgfextra{
+					%			\begin{pgfinterruptpath}
+					%				\draw [bracket style]
+					%				($(\tikzlastnode.south west)+(0,2pt)$)
+					%				|- (\tikzlastnode.south)
+					%				-| ($(\tikzlastnode.south east)+(0,2pt)$);
+					%			\end{pgfinterruptpath}
+				}
+			},
+		},
+		%%%
+		% von mir dazu gedichtet, um z. B. in Merkkästen Lingsbündig zu schreiben
+		bracket style/.style={},
+		underleft box/.style={
+			every fill in box,
+			align=left,
+			append after command={%
+				\pgfextra{\begin{pgfinterruptpath}
+						\draw [bracket style]
+						($(\tikzlastnode.south west)+(0,2pt)$)
+						|- (\tikzlastnode.south)
+						-| ($(\tikzlastnode.south east)+(0,2pt)$);
+				\end{pgfinterruptpath}}
+			},
+		},
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		underoverbracked box/.style={
+			every fill in box,
+			append after command={%
+				\pgfextra{\begin{pgfinterruptpath}
+						\draw [bracket style]
+						($(\tikzlastnode.north west)-(0,2pt)$)
+						|- (\tikzlastnode.north)
+						-| ($(\tikzlastnode.north east)-(0,2pt)$);
+						\draw [bracket style]
+						($(\tikzlastnode.south west)+(0,2pt)$)
+						|- (\tikzlastnode.south)
+						-| ($(\tikzlastnode.south east)+(0,2pt)$);
+				\end{pgfinterruptpath}}
+			},
+		},
+		fill in/.style={
+			colored box,
+		},
+	}
+	\tikzset{
+		every fill in box/.style={
+			inner xsep=4pt,			% wie groß ist der x-Abstand der Box vom Text
+			inner ysep=2pt,			% wie groß ist der y-Abstand der Box vom Text
+			minimum height=4ex,
+			align=center, %% war "center"
+			font={\sffamily\bfseries}, % war: 		font={\sffamily\slshape\bfseries},
+			color=magenta,
+			color=blue,
+			fill=black!5!white%dazu gedichtet
+		},
+		%%%
+		bracket style/.style={},
+		simple box/.style={
+			every fill in box,
+			append after command={
+				\pgfextra{
+					%			\begin{pgfinterruptpath}
+					%				\draw [bracket style]
+					%				($(\tikzlastnode.south west)+(0,2pt)$)
+					%				|- (\tikzlastnode.south)
+					%				-| ($(\tikzlastnode.south east)+(0,2pt)$);
+					%			\end{pgfinterruptpath}
+				}%
+			},
+		},
+		%%%
+		fill in/.style={
+			colored box,
+		},
+	}
+		
+	\NewDocumentCommand { \fib@hide } { m } {%
+		\iffibhideanswer
+		\phantom{#1}%
+		\else
+			{\boldmath\bfseries#1}%
+		\fi
+	}
+	
+	\NewDocumentCommand { \shortfib@hide } { m } {%
+		\iffibhideanswer
+		\phantom{#1}%
+		\else
+			{\boldmath\bfseries#1}%
+		\fi
+	}
+	
+	\NewDocumentCommand { \fib@makebox }{ m }{%
+		\settowidth{\fib@width}{\tikz\node[fill in]{#1};}%
+		\begin{tikzpicture}[baseline=(fill in node.base)]
+		\node (fill in node)
+		[text width=\fib@widthfactor*\fib@width,fill in]
+		{%
+			\fib@hide{#1}%
+		};
+		\end{tikzpicture}%
+	}
+	
+	\NewDocumentCommand { \shortfib@makebox }{ m }{%
+		\settowidth{\shortfib@width}{\tikz\node[fill in]{#1};}%
+		\begin{tikzpicture}[baseline=(fill in node.base)]
+		\node (fill in node)
+		[text width=\shortfib@widthfactor*\shortfib@width,fill in]
+		{%
+			\shortfib@hide{#1}%
+		};
+		\end{tikzpicture}%
+	}
+	
+	\NewDocumentCommand { \fib } { s o m }{{%
+			\IfBooleanT{#1}{\fibhideanswerfalse}%
+			\IfValueT{#2}{\tikzset{fill in/.style={#2}}}%
+			\ifmmode
+				\mathchoice
+					{\fib@makebox{$\displaystyle#3$}}
+					{\fib@makebox{$\textstyle#3$}}
+					{\fib@makebox{$\scriptstyle#3$}}
+					{\fib@makebox{$\scriptscriptstyle#3$}}
+			\else
+				\fib@makebox{{\boldmath\bfseries#3}}% <---- Dieses Kommentarzeichen war für die Lücken hinter den fibs verantwortlich!!!!
+				%https://tex.stackexchange.com/questions/288561/how-to-boldify-a-part-of-text-with-maths
+				%https://tex.stackexchange.com/questions/253105/question-about-bolding-math-and-text-simultaneously
+			\fi
+	}}
+	
+	\NewDocumentCommand { \shortfib } { s o m }{{%
+			\IfBooleanT{#1}{\fibhideanswerfalse}%
+			\IfValueT{#2}{\tikzset{fill in/.style={#2}}}%
+			\ifmmode
+				\mathchoice
+					{\shortfib@makebox{$\displaystyle#3$}}
+					{\shortfib@makebox{$\textstyle#3$}}
+					{\shortfib@makebox{$\scriptstyle#3$}}
+					{\shortfib@makebox{$\scriptscriptstyle#3$}}
+			\else
+				\shortfib@makebox{{\boldmath\bfseries#3}}% <---- Dieses Kommentarzeichen war für die Lücken hinter den fibs verantwortlich!!!!
+				%https://tex.stackexchange.com/questions/288561/how-to-boldify-a-part-of-text-with-maths
+				%https://tex.stackexchange.com/questions/253105/question-about-bolding-math-and-text-simultaneously
+			\fi
+	}}
+
+\makeatother
+
+%%%%%%%%%%%%%%%
+%oberhalb gibt es wohl den Grund für die Lücke nach einer fib-Lücke!
+%%%%%%%%%%%%%%%
+
+% Definition des Standards:
+
+%\tikzset{fill in/.style={colored box}}% = Voreinstellung
+%\tikzset{fill in/.style={framed box}}
+%\tikzset{fill in/.style={underlined box}}
+%\tikzset{fill in/.style={underbracked box}}
+\tikzset{fill in/.style={underleft box}}
+%\tikzset{fill in/.style={underoverbracked box}}
+
+\tikzset{colored box/.append style={fill=black!5!white}}
+\tikzset{underline style/.style={dotted, thick}}
+\tikzset{bracket style/.style={gray, thick}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%https://tobiw.de/tbdm/lueckentexte
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Einfärben eines Ringes:
+
+\tikzset{
+	ring shading/.code args={from #1 at #2 to #3 at #4}{
+		\pgfmathsetmacro{\inner}{25*#2/#4}
+		\pgfmathsetmacro{\innerlow}{\inner-1}
+		\pgfdeclareradialshading{ring}{\pgfpoint{0cm}{0cm}}%
+		{
+			color(0bp)=(white);
+			color(\innerlow bp)=(white);
+			color(\inner bp)=(#1);
+			color(25bp)=(#3);
+			color(50bp)=(black)
+		}
+		\pgfkeysalso{/tikz/shading=ring}
+	},
+}
+
+
+%%% Für Baumdiagramme
+%\tikzset{
+%	basic/.style  = 	{draw, font=\sffamily, rectangle},
+%	root/.style   = 	{basic, text width=4cm, rounded corners=2pt, thick, align=center, fill=white!30, minimum height=1cm},
+%	level 1/.style = 	{basic, text width=6cm, rounded corners=2pt, thick, align=center, fill=white!60, minimum height=1.5cm, sibling distance = 7cm},
+%	level 2/.style = 	{basic, text width=5cm, rounded corners=2pt, thick, align=center, fill=white!60, minimum height=1.5cm, sibling distance = 6cm},
+%}
+
+\makeatletter
+\newif\if@showgrid@grid
+\newif\if@showgrid@left
+\newif\if@showgrid@right
+\newif\if@showgrid@below
+\newif\if@showgrid@above
+\tikzset{%
+	every show grid/.style={},
+	show grid/.style={execute at end picture={\@showgrid{grid=true,#1}}},%
+	show grid/.default={true},
+	show grid/.cd,
+	labels/.style={font={\sffamily\small},help lines},
+	xlabels/.style={},
+	ylabels/.style={},
+	keep bb/.code={\useasboundingbox (current bounding box.south west) rectangle (current bounding box.north west);},
+	true/.style={left,below},
+	false/.style={left=false,right=false,above=false,below=false,grid=false},
+	none/.style={left=false,right=false,above=false,below=false},
+	all/.style={left=true,right=true,above=true,below=true},
+	grid/.is if=@showgrid@grid,
+	left/.is if=@showgrid@left,
+	right/.is if=@showgrid@right,
+	below/.is if=@showgrid@below,
+	above/.is if=@showgrid@above,
+	false,
+}
+
+\def\@showgrid#1{%
+	\begin{scope}[every show grid,show grid/.cd,#1]
+		\if@showgrid@grid
+		\begin{pgfonlayer}{background}
+			\draw [help lines]
+			(current bounding box.south west) grid
+			(current bounding box.north east);
+			%
+			\pgfpointxy{1}{1}%
+			\edef\xs{\the\pgf@x}%
+			\edef\ys{\the\pgf@y}%
+			\pgfpointanchor{current bounding box}{south west}
+			\edef\xa{\the\pgf@x}%
+			\edef\ya{\the\pgf@y}%
+			\pgfpointanchor{current bounding box}{north east}
+			\edef\xb{\the\pgf@x}%
+			\edef\yb{\the\pgf@y}%
+			\pgfmathtruncatemacro\xbeg{ceil(\xa/\xs)}
+			\pgfmathtruncatemacro\xend{floor(\xb/\xs)}
+			\if@showgrid@below
+			\foreach \X in {\xbeg,...,\xend} {
+				\node [below,show grid/labels,show grid/xlabels] at (\X,\ya) {\X};
+			}
+			\fi
+			\if@showgrid@above
+			\foreach \X in {\xbeg,...,\xend} {
+				\node [above,show grid/labels,show grid/xlabels] at (\X,\yb) {\X};
+			}
+			\fi
+			\pgfmathtruncatemacro\ybeg{ceil(\ya/\ys)}
+			\pgfmathtruncatemacro\yend{floor(\yb/\ys)}
+			\if@showgrid@left
+			\foreach \Y in {\ybeg,...,\yend} {
+				\node [left,show grid/labels,show grid/ylabels] at (\xa,\Y) {\Y};
+			}
+			\fi
+			\if@showgrid@right
+			\foreach \Y in {\ybeg,...,\yend} {
+				\node [right,show grid/labels,show grid/ylabels] at (\xb,\Y) {\Y};
+			}
+			\fi
+		\end{pgfonlayer}
+		\fi
+	\end{scope}
+}
+\makeatother
+
+\usepackage{eqparbox}
