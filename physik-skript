@@ -1,0 +1,66 @@
+\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_Basis.tex}
+\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_TikZ}
+\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_Ma_Ph}
+\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_Exam}
+%\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_LNW}
+\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_AH}
+
+
+%% --- Testbereich --------------------------------
+\newcommand{\skriptfigure}[3]{
+\begin{figure}[H]
+	\centering 
+	\vspace*{-1ex}
+	\ifprintanswers
+	\includegraphics[width=#1\linewidth]{./Bilder/#2}
+	\else
+	\includegraphics[width=#1\linewidth]{./Bilder/#3}
+	\fi
+\end{figure}
+}
+%% ------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Lösungen  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\printanswers 							\fibhideanswerfalse
+	\noprintanswers \printanswersfalse 	\fibhideanswertrue
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{headandfoot}
+\runningfootrule
+\runningfooter{Ph 10 I}{Energieversorgung - 2022 2023}{Seite \thepage\/ von \numpages}
+
+\input{Glossar.tex}
+
+\begin{document}
+	
+\part*{Physik 10 I - Energieversorgung}	
+\tableofcontents
+
+\vfill
+
+\begin{flushright}
+	\qrcode{https://skoobi.de}
+\end{flushright}
+
+\clearpage
+
+\input{Energieträger.tex}
+\input{Wärmekraftwerke.tex}
+\input{Solarkraftwerke.tex}
+\input{Wasserkraftwerke.tex}
+\input{Windkraftwerke.tex}
+\input{Gekoppelte Kraftwerkssysteme.tex}
+\input{Waserstofftechnik.tex}
+\input{Speichertechniken.tex}
+\input{Übertragungstechniken.tex}
+%\input{Auswirkungen auf die Umwelt.tex}
+
+%% --- Glossar erzeugen --------------------
+%\newpage
+%\printglossary
+%\clearpage
+%% -----------------------------------------
+
+\end{document}
