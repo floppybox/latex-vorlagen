@@ -5,6 +5,20 @@
 \input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_LNW}
 %\input{/Users/florian/Documents/Mybox/LaTeX/Praeambeln/Praeambel_AH}
 
+%% --- Testbereich --------------------------------
+\newcommand{\skriptfigure}[3]{
+\begin{figure}[H]
+	\centering 
+	\vspace*{-1ex}
+	\ifprintanswers
+	\includegraphics[width=#1\linewidth]{./Bilder/#2}
+	\else
+	\includegraphics[width=#1\linewidth]{./Bilder/#3}
+	\fi
+\end{figure}
+}
+%% ------------------------------------------------
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Lösungen  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\printanswers 							\fibhideanswerfalse
